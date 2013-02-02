@@ -1,9 +1,45 @@
-import sys
+#ifndef LEXER_H
+#define LEXER_H
+#include <stdio.h>
+#include <queue>
 
+#include "token.h"
+
+class Lexer
+{
+public:
+	static const char OPERATORS[];
+	static const char SYNTAX[];
+
+	Lexer(void);
+	~Lexer(void) throw();
+
+	bool Init(const char* file);
+
+	bool HasNext(void);
+	const Token Next(void);
+
+private:
+	FILE* file;
+	char current;
+
+	void get_next(void);
+	void find_next(void);
+	void finish_token(void);
+	inline void match(void) { get_next(); }
+
+	const Token parse_number(void);
+	const Token parse_string(void);
+	const Token parse_operator(void);
+	const Token parse_syntax(void);
+	const Token parse_id(void);
+};
+
+/*
 class Lexer(object):
     def __init__(self, file_name):
         self.syntax = list('{}()[];,:.@')
-        self.operators = list('+-*/=<>!&|^~%')
+        self.operators = list('+-*=<>/!&|^~%')
         self.source = open(file_name, 'r')
 
     def get_next(self):
@@ -78,17 +114,7 @@ class Lexer(object):
             token += self.current
             self.match()
         return '<id, %s>' % token
+*/
 
-
-def main():
-    if len(sys.argv) < 2:
-        print >> sys.stderr, 'usage: python lex.py FILE'
-        sys.exit(2)
-
-    lex = Lexer(sys.argv[1])
-    for token in lex.tokens:
-        print token
-
-if __name__ == '__main__':
-    main()
+#endif // LEXER_H
 

@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 
+#include "lexer.h"
 #include "messages.h"
  
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
@@ -88,6 +89,18 @@ int main(int argc, char **argv)
 
 void translate(const char* file)
 {
+	Lexer lex;
+	if (!lex.Init(file))
+	{
+		CRITICAL("Could not open file %s", file);
+		exit(EXIT_FAILURE);
+	}
+
+	while (lex.HasNext())
+	{
+		lex.Next().Print();
+		printf("\n");
+	}
 }
 
 void usage(void)

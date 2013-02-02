@@ -7,6 +7,8 @@ REMOVEDIR = rm -rf
 
 SRC =	main.cpp \
 		messages.cpp \
+		lexer.cpp \
+		token.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3
