@@ -31,14 +31,11 @@ std::string TokenTypeToString(TokenType type)
 	case TOKEN_STRING:
 		return std::string("string");
 		break;
-	case TOKEN_OPERATOR:
-		return std::string("operator");
-		break;
 	case TOKEN_SYNTAX:
 		return std::string("syntax");
 		break;
-	case TOKEN_ID:
-		return std::string("id");
+	case TOKEN_SYMBOL:
+		return std::string("symbol");
 		break;
 	case TOKEN_INVAL:
 		// fall through
