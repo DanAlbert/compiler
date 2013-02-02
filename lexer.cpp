@@ -35,23 +35,23 @@ const Token Lexer::Next(void)
 
 	if (isdigit(this->current))
 	{
-		return this->parse_number();
+		return this->parseNumber();
 	}
 	else if (this->current == '\'' || this->current == '"')
 	{
-		return this->parse_string();
+		return this->parseString();
 	}
 	else if (strchr(Lexer::OPERATORS, this->current))
 	{
-		return this->parse_operator();
+		return this->parseOperator();
 	}
 	else if (strchr(Lexer::SYNTAX, this->current))
 	{
-		return this->parse_syntax();
+		return this->parseSyntax();
 	}
 	else if (isalpha(this->current) || this->current == '_')
 	{
-		return this->parse_id();
+		return this->parseId();
 	}
 	else
 	{
@@ -69,42 +69,42 @@ bool Lexer::Init(const char* file)
 	if (!this->file)
 		return false;
 
-	this->find_next();
+	this->findNext();
 	return true;
 }
 
-void Lexer::get_next(void)
+void Lexer::getNext(void)
 {
 	assert(this->file);
 	this->current = fgetc(this->file);
 }
 
-void Lexer::find_next(void)
+void Lexer::findNext(void)
 {
-	this->get_next();
+	this->getNext();
 
 	while (isspace(this->current) || this->current == '#')
 	{
 		if (isspace(this->current))
 		{
 			while (isspace(this->current)) // skip white space
-				this->get_next();
+				this->getNext();
 		}
 		else if (this->current == '#') // skip comments
 		{
 			while (this->current != '\n')
-				this->get_next();
+				this->getNext();
 		}
 	}
 }
 
-void Lexer::finish_token(void)
+void Lexer::finishToken(void)
 {
 	if (isspace(this->current) || this->current == '#')
-		this->find_next();
+		this->findNext();
 }
 
-const Token Lexer::parse_number(void)
+const Token Lexer::parseNumber(void)
 {
 	std::string token;
 	while (isdigit(this->current))
@@ -113,11 +113,11 @@ const Token Lexer::parse_number(void)
 		this->match();
 	}
 
-	this->finish_token();
+	this->finishToken();
 	return Token(TOKEN_NUMBER, token);
 }
 
-const Token Lexer::parse_string(void)
+const Token Lexer::parseString(void)
 {
 	std::string token;
 	char quote_type = this->current;
@@ -138,29 +138,29 @@ const Token Lexer::parse_string(void)
 		exit(EXIT_FAILURE);
 	}
 
-	this->finish_token();
+	this->finishToken();
 	return Token(TOKEN_STRING, token);
 }
 
-const Token Lexer::parse_operator(void)
+const Token Lexer::parseOperator(void)
 {
 	std::string token;
 	token += this->current;
 	this->match();
-	this->finish_token();
+	this->finishToken();
 	return Token(TOKEN_OPERATOR,token);
 }
 
-const Token Lexer::parse_syntax(void)
+const Token Lexer::parseSyntax(void)
 {
 	std::string token;
 	token += this->current;
 	this->match();
-	this->finish_token();
+	this->finishToken();
 	return Token(TOKEN_SYNTAX, token);
 }
 
-const Token Lexer::parse_id(void)
+const Token Lexer::parseId(void)
 {
 	std::string token;
 	while (isalnum(this->current) || this->current == '_')
@@ -169,7 +169,7 @@ const Token Lexer::parse_id(void)
 		this->match();
 	}
 
-	this->finish_token();
+	this->finishToken();
 	return Token(TOKEN_ID, token);
 }
 

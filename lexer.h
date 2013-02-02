@@ -23,16 +23,16 @@ private:
 	FILE* file;
 	char current;
 
-	void get_next(void);
-	void find_next(void);
-	void finish_token(void);
-	inline void match(void) { get_next(); }
+	void getNext(void);
+	void findNext(void);
+	void finishToken(void);
+	inline void match(void) { getNext(); }
 
-	const Token parse_number(void);
-	const Token parse_string(void);
-	const Token parse_operator(void);
-	const Token parse_syntax(void);
-	const Token parse_id(void);
+	const Token parseNumber(void);
+	const Token parseString(void);
+	const Token parseOperator(void);
+	const Token parseSyntax(void);
+	const Token parseId(void);
 };
 
 /*
