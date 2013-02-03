@@ -5,6 +5,9 @@ CPC = g++
 REMOVE = rm -f
 REMOVEDIR = rm -rf
 
+DEPDIR = .dep
+DOCDIR = doc
+
 SRC =	main.cpp \
 		messages.cpp \
 		lexer.cpp \
@@ -12,7 +15,7 @@ SRC =	main.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3
-CSTANDARD = 
+CSTANDARD = -std=c++0x
 INCLUDEDIRS = 
 OBJDIR = obj
 RUNFLAGS = 
@@ -27,7 +30,7 @@ CFLAGS =	$(INCLUDEDIRS) \
 LDFLAGS = 
 
 # Compiler flags to generate dependency files.
-GENDEPFLAGS = -MMD -MP -MF .dep/$(@F).d
+GENDEPFLAGS = -MMD -MP -MF $(DEPDIR)/$(@F).d
 
 # Combine all necessary flags and optional flags.
 ALL_CFLAGS = $(CFLAGS) $(GENDEPFLAGS)
@@ -58,20 +61,22 @@ $(OBJDIR)/%.o : %.cpp
 
 doc:
 	doxygen
+	make -C $(DOCDIR)/latex
 
 clean:
 	$(REMOVE) $(NAME)
 	$(REMOVE) $(SRC:%.cpp=$(OBJDIR)/%.o)
 	$(REMOVE) $(SRC:.cpp=.d)
-	$(REMOVEDIR) .dep
+	$(REMOVEDIR) $(DEPDIR)
 	$(REMOVEDIR) $(OBJDIR)
+	$(REMOVEDIR) $(DOCDIR)
 
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
 
 # Include the dependency files.
--include $(shell mkdir .dep 2>/dev/null) $(wildcard .dep/*)
+-include $(shell mkdir $(DEPDIR) 2>/dev/null) $(wildcard $(DEPDIR)/*)
 
 # Listing of phony targets.
-.PHONY : clean
+.PHONY : clean doc
 

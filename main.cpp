@@ -1,7 +1,9 @@
 /**
+ * @file main.cpp
+ *
  * The entry point for our compiler.
  * 
- * @author: Dan Albert <dan@gingerhq.net>
+ * @author Dan Albert <dan@gingerhq.net>
  *
  * This compiler translates from IBTL (Itty Bitty Teaching Language) to GForth.
  */
@@ -12,12 +14,53 @@
 #include "lexer.h"
 #include "messages.h"
  
+/**
+ * @def MIN
+ *
+ * Returns the minimum of two values.
+ *
+ * @param a The first value.
+ * @param b The second value.
+ *
+ * @return The minimum of the two values.
+ */
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
+/**
+ * @def MAX
+ *
+ * Returns the maximum of two values.
+ *
+ * @param a The first value.
+ * @param b The second value.
+ *
+ * @return The maximum of the two values.
+ */
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+/**
+ * @def CLAMP
+ *
+ * Returns a value that is clamped between two values.
+ *
+ * @param x The value to be clamped.
+ * @param l The lower bound that x is to be clamped to.
+ * @param h The upper bound that x is to be clamped to.
+ *
+ * @return l if x < l, h if x > h, x otherwise.
+ */
 #define CLAMP(x, l, h) (((x) > (h)) ? (h) : (((x) < (l)) ? (l) : (x)))
 
+/**
+ * Translates a source file.
+ *
+ * @param file The file to be translated.
+ */
 void translate(const char* file);
 
+/**
+ * Prints usage information.
+ */
 void usage(void);
 
 int main(int argc, char **argv)

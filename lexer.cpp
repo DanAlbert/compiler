@@ -100,7 +100,7 @@ const Token Lexer::parseNumber(void)
 	}
 
 	this->finishToken();
-	return Token(TOKEN_NUMBER, token);
+	return Token(Token::Type::Number, token);
 }
 
 const Token Lexer::parseString(void)
@@ -125,7 +125,7 @@ const Token Lexer::parseString(void)
 	}
 
 	this->finishToken();
-	return Token(TOKEN_STRING, token);
+	return Token(Token::Type::String, token);
 }
 
 const Token Lexer::parseSyntax(void)
@@ -134,7 +134,7 @@ const Token Lexer::parseSyntax(void)
 	token += this->current;
 	this->match();
 	this->finishToken();
-	return Token(TOKEN_SYNTAX, token);
+	return Token(Token::Type::Syntax, token);
 }
 
 const Token Lexer::parseSymbol(void)
@@ -149,7 +149,7 @@ const Token Lexer::parseSymbol(void)
 	}
 
 	this->finishToken();
-	return Token(TOKEN_SYMBOL, token);
+	return Token(Token::Type::Symbol, token);
 }
 
 bool iscomment(char c)

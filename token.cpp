@@ -6,9 +6,9 @@
 
 #include "messages.h"
 
-std::string TokenTypeToString(TokenType type);
+std::string TokenTypeToString(Token::Type type);
 
-Token::Token(TokenType type, std::string token)
+Token::Token(Type type, std::string token)
 {
 	this->type = type;
 	this->token = token;
@@ -21,24 +21,22 @@ void Token::Print(FILE* file) const
 		   	TokenTypeToString(this->type).c_str(), this->token.c_str());
 }
 
-std::string TokenTypeToString(TokenType type)
+std::string TokenTypeToString(Token::Type type)
 {
 	switch (type)
 	{
-	case TOKEN_NUMBER:
+	case Token::Type::Number:
 		return std::string("number");
 		break;
-	case TOKEN_STRING:
+	case Token::Type::String:
 		return std::string("string");
 		break;
-	case TOKEN_SYNTAX:
+	case Token::Type::Syntax:
 		return std::string("syntax");
 		break;
-	case TOKEN_SYMBOL:
+	case Token::Type::Symbol:
 		return std::string("symbol");
 		break;
-	case TOKEN_INVAL:
-		// fall through
 	default:
 		ERROR("invalid token");
 		exit(EXIT_FAILURE);
