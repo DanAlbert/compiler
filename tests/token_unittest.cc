@@ -3,17 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../token.h"
-#include "../token.cpp"
-#include "../messages.h"
 #include "gtest/gtest.h"
 
 // Step 2: create test macro cases
-// Tests factorial of negative numbers.
 TEST(TokenTest, TokenTypeToString ) {
-  // This test is named "isComment", and belongs to the "LexerTest"
-  // test case.
-  EXPECT_EQ("number", TokenTypeToString('1'));
-  //EXPECT_EQ("string",TokenTypetoString("string"));
+  EXPECT_EQ(strcmp( "number",TokenTypeToString('1') ), 0);
 }
 
 // Step 3. Call RUN_ALL_TESTS() in main().

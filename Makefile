@@ -63,6 +63,10 @@ doc:
 	doxygen
 	make -C $(DOCDIR)/latex
 
+test: $(NAME) 
+	./compiler tests/guest.lisp > test.txt 2>errors.txt
+	diff test.txt golden.txt >diff.txt
+
 clean:
 	$(REMOVE) $(NAME)
 	$(REMOVE) $(SRC:%.cpp=$(OBJDIR)/%.o)
@@ -70,6 +74,8 @@ clean:
 	$(REMOVEDIR) $(DEPDIR)
 	$(REMOVEDIR) $(OBJDIR)
 	$(REMOVEDIR) $(DOCDIR)
+	$(REMOVEDIR) test.txt
+		
 
 # Create object files directory
 $(shell mkdir $(OBJDIR) 2>/dev/null)
