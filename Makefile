@@ -7,6 +7,7 @@ REMOVEDIR = rm -rf
 
 DEPDIR = .dep
 DOCDIR = doc
+TESTDIR = tests
 
 SRC =	main.cpp \
 		messages.cpp \
@@ -64,8 +65,7 @@ doc:
 	make -C $(DOCDIR)/latex
 
 test: $(NAME) 
-	./compiler tests/guest.lisp > test.txt 2>errors.txt
-	diff test.txt golden.txt >diff.txt
+	python $(TESTDIR)/run-tests.py
 
 clean:
 	$(REMOVE) $(NAME)
