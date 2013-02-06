@@ -47,8 +47,7 @@ $(NAME): $(OBJ)
 	@$(CXX) -o $@ $(ALL_CFLAGS) $^ $(LDFLAGS)
 
 stutest.out: $(NAME)
-	-$(NAME) $(RUNFLAGS) stutest1.in > stutest1.out
-	-$(NAME) stutest2.in > stutest2.out
+	-./$(NAME) $(RUNFLAGS) $(TESTDIR)/sample.scm > stutest.out
 
 proftest.out: $(NAME)
 	cat $(PROFTEST)
@@ -69,14 +68,14 @@ test: $(NAME)
 	python $(TESTDIR)/run-tests.py
 
 clean:
-	make -C $(TESTDIR) clean
+	-make -C $(TESTDIR) clean
+	$(REMOVE) stutest.out
 	$(REMOVE) $(NAME)
 	$(REMOVE) $(SRC:%.cpp=$(OBJDIR)/%.o)
 	$(REMOVE) $(SRC:.cpp=.d)
 	$(REMOVEDIR) $(DEPDIR)
 	$(REMOVEDIR) $(OBJDIR)
 	$(REMOVEDIR) $(DOCDIR)
-	$(REMOVEDIR) test.txt
 
 distclean: clean
 	make -C $(TESTDIR) distclean
