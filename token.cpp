@@ -2,11 +2,10 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <sstream>
 #include <string>
 
 #include "messages.h"
-
-std::string TokenTypeToString(Token::Type type);
 
 Token::Token(Type type, std::string token)
 {
@@ -14,11 +13,18 @@ Token::Token(Type type, std::string token)
 	this->token = token;
 }
 
+const std::string Token::ToString(void) const
+{
+	std::ostringstream builder;
+	std::string token = TokenTypeToString(this->type);
+	builder << '<' << token << ", " << this->token << '>';
+	return builder.str();
+}
+
 void Token::Print(FILE* file) const
 {
 	assert(file);
-	fprintf(file, "<%s, %s>",
-		   	TokenTypeToString(this->type).c_str(), this->token.c_str());
+	fprintf(file, "%s", this->ToString().c_str());
 }
 
 std::string TokenTypeToString(Token::Type type)

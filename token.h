@@ -38,6 +38,16 @@ public:
 		Symbol
 	};
 
+	inline Type GetType(void) const
+	{
+		return this->type;
+	}
+
+	inline const std::string GetToken(void) const
+	{
+		return this->token;
+	}
+
 	/**
 	 * Instantiates a token. Once instantiated, a token may not be modified.
 	 *
@@ -54,6 +64,13 @@ public:
 	 */
 	void Print(FILE* file = stdout) const;
 
+	/**
+	 * Returns a string representation of the object.
+	 *
+	 * @return A string representing the object.
+	 */
+	const std::string ToString(void) const;
+
 private:
 	/**
 	 * This token's type.
@@ -65,6 +82,8 @@ private:
 	 */
 	std::string token;
 };
+
+std::string TokenTypeToString(Token::Type type);
 
 #endif // TOKEN_H
 

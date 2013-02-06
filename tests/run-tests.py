@@ -5,9 +5,13 @@ import subprocess
 import sys
 
 import functional
+import unit
 
 def main():
     errors = 0
+
+    print 'Running unit tests'
+    errors += unit.test()
 
     print 'Running functional tests'
     errors += functional.test()
