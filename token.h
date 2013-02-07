@@ -38,6 +38,14 @@ public:
 		Symbol
 	};
 
+	/**
+	 * Instantiates a token. Once instantiated, a token may not be modified.
+	 *
+	 * @param type The type of token being instantiated.
+	 * @param token A string containing the token value.
+	 */
+	Token(Type type, std::string token);
+	
 	inline Type GetType(void) const
 	{
 		return this->type;
@@ -48,14 +56,9 @@ public:
 		return this->token;
 	}
 
-	/**
-	 * Instantiates a token. Once instantiated, a token may not be modified.
-	 *
-	 * @param type The type of token being instantiated.
-	 * @param token A string containing the token value.
-	 */
-	Token(Type type, std::string token);
-	
+	bool operator==(const Token& other);
+	bool operator!=(const Token& other);
+
 	/**
 	 * Prints a representation of the token to the specified file descriptor.
 	 *

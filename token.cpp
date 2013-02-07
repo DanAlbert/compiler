@@ -13,6 +13,17 @@ Token::Token(Type type, std::string token)
 	this->token = token;
 }
 
+bool Token::operator==(const Token& other)
+{
+	return (this->GetType() == other.GetType()) &&
+	       (this->GetToken() == other.GetToken());
+}
+
+bool Token::operator!=(const Token& other)
+{
+	return !(*this == other);
+}
+
 const std::string Token::ToString(void) const
 {
 	std::ostringstream builder;
