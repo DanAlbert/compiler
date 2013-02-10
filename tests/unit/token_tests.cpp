@@ -24,6 +24,34 @@ TEST(Token, Constructor)
 	}
 }
 
+TEST(Token, CopyConstructor)
+{
+	for (int i = 0; i < NRAND_TESTS; i++)
+	{
+		Token::Type type = RandomType();
+		std::string str = RandomString(MAX_STRING_LENGTH);
+
+		Token token(type, str);
+		Token token2(token);
+
+		EXPECT_EQ(token, token2);
+	}
+}
+
+TEST(Token, Assignment)
+{
+	for (int i = 0; i < NRAND_TESTS; i++)
+	{
+		Token::Type type = RandomType();
+		std::string str = RandomString(MAX_STRING_LENGTH);
+
+		Token token(type, str);
+		Token token2 = token;
+
+		EXPECT_EQ(token, token2);
+	}
+}
+
 TEST(Token, Equality)
 {
 	for (int i = 0; i < NRAND_TESTS; i++)
@@ -34,7 +62,7 @@ TEST(Token, Equality)
 		Token token1(type, str);
 		Token token2(type, str);
 
-		EXPECT_TRUE(token1 == token2);
+		EXPECT_EQ(token1, token2);
 	}
 }
 
@@ -54,18 +82,18 @@ TEST(Token, Inequality)
 		Token token3(Token::Type::String, str1);
 		Token token4(Token::Type::String, str2);
 
-		EXPECT_TRUE(token1 != token2);
-		EXPECT_TRUE(token1 != token3);
-		EXPECT_TRUE(token1 != token4);
-		EXPECT_TRUE(token2 != token1);
-		EXPECT_TRUE(token2 != token3);
-		EXPECT_TRUE(token2 != token4);
-		EXPECT_TRUE(token3 != token1);
-		EXPECT_TRUE(token3 != token2);
-		EXPECT_TRUE(token3 != token4);
-		EXPECT_TRUE(token4 != token1);
-		EXPECT_TRUE(token4 != token2);
-		EXPECT_TRUE(token4 != token3);
+		EXPECT_NE(token1, token2);
+		EXPECT_NE(token1, token3);
+		EXPECT_NE(token1, token4);
+		EXPECT_NE(token2, token1);
+		EXPECT_NE(token2, token3);
+		EXPECT_NE(token2, token4);
+		EXPECT_NE(token3, token1);
+		EXPECT_NE(token3, token2);
+		EXPECT_NE(token3, token4);
+		EXPECT_NE(token4, token1);
+		EXPECT_NE(token4, token2);
+		EXPECT_NE(token4, token3);
 	}
 }
 

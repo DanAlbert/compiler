@@ -13,13 +13,30 @@ Token::Token(Type type, std::string token)
 	this->token = token;
 }
 
-bool Token::operator==(const Token& other)
+Token::Token(const Token& token)
+{
+	this->type = token.type;
+	this->token = token.token;
+}
+
+Token& Token::operator=(const Token& rhs)
+{
+	if (this == &rhs)
+		return *this;
+
+	this->type = rhs.type;
+	this->token = rhs.token;
+
+	return *this;
+}
+
+bool Token::operator==(const Token& other) const
 {
 	return (this->GetType() == other.GetType()) &&
 	       (this->GetToken() == other.GetToken());
 }
 
-bool Token::operator!=(const Token& other)
+bool Token::operator!=(const Token& other) const
 {
 	return !(*this == other);
 }

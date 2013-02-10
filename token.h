@@ -45,6 +45,8 @@ public:
 	 * @param token A string containing the token value.
 	 */
 	Token(Type type, std::string token);
+
+	Token(const Token& token);
 	
 	inline Type GetType(void) const
 	{
@@ -56,8 +58,10 @@ public:
 		return this->token;
 	}
 
-	bool operator==(const Token& other);
-	bool operator!=(const Token& other);
+	Token& operator=(const Token& rhs);
+
+	bool operator==(const Token& other) const;
+	bool operator!=(const Token& other) const;
 
 	/**
 	 * Prints a representation of the token to the specified file descriptor.
