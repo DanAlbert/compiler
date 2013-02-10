@@ -51,6 +51,8 @@
  */
 #define CLAMP(x, l, h) (((x) > (h)) ? (h) : (((x) < (l)) ? (l) : (x)))
 
+#define DEFAULT_MODE Mode::Translate
+
 /**
  * Translates a source file.
  *
@@ -59,26 +61,50 @@
 void translate(const char* file);
 
 /**
+ * Scans a file and prints the list of tokens.
+ *
+ * @param file The file to be scanned.
+ */
+void printScan(const char* file);
+
+/**
+ * Parses a file and prints the generated syntax tree.
+ *
+ * @param file The file to be parsed.
+ */
+void printParse(const char* file);
+
+/**
  * Prints usage information.
  */
 void usage(void);
 
+enum class Mode
+{
+	Scan,
+	Parse,
+	Translate
+};
+
 int main(int argc, char **argv)
 {
+	Mode mode = DEFAULT_MODE;
 	int c;
  
 	while (1)
 	{
 		static struct option long_options[] =
 		{
-			{"help",    no_argument, 0, 'h'},
-			{"verbose", no_argument, 0, 'v'},
+			{"help",     no_argument, 0, 'h'},
+			{"tokenize", no_argument, 0, 't'},
+			{"syntax",   no_argument, 0, 's'},
+			{"verbose",  no_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
 
 		int option_index = 0;
  
-		c = getopt_long(argc, argv, "hv",
+		c = getopt_long(argc, argv, "htsv",
 		                long_options, &option_index);
  
 		/* Detect the end of the options. */
@@ -100,6 +126,12 @@ int main(int argc, char **argv)
 			usage();
 			exit(EXIT_SUCCESS);
 			break;
+		case 't':
+			mode = Mode::Scan;
+			break;
+		case 's':
+			mode = Mode::Parse;
+			break;
 		case 'v':
 			set_log_level(CLAMP(get_log_level() + 1,
 			                    LOGLEVEL_MIN, LOGLEVEL_MAX));
@@ -118,7 +150,22 @@ int main(int argc, char **argv)
 	{
 		while (optind < argc)
 		{
-			translate(argv[optind++]);
+			char* file = argv[optind++];
+			switch (mode)
+			{
+			case Mode::Scan:
+				printScan(file);
+				break;
+			case Mode::Parse:
+				printParse(file);
+				break;
+			case Mode::Translate:
+				translate(file);
+				break;
+			default:
+				CRITICAL("invalid mode %d", static_cast<int>(mode));
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 	else
@@ -132,6 +179,16 @@ int main(int argc, char **argv)
 
 void translate(const char* file)
 {
+	assert(file);
+	INFO("translating %s", file);
+	WARNING("translate() is not yet implemented");
+}
+
+void printScan(const char* file)
+{
+	assert(file);
+	INFO("scanning %s", file);
+
 	Lexer lex;
 	if (!lex.Init(file))
 	{
@@ -146,11 +203,20 @@ void translate(const char* file)
 	}
 }
 
+void printParse(const char* file)
+{
+	assert(file);
+	INFO("parsing %s", file);
+	WARNING("printParse() is not yet implemented");
+}
+
 void usage(void)
 {
     printf("usage: compiler OPTIONS FILES\n");
     printf("OPTIONS:\n");
     printf("    -h, --help      - display the message\n");
+	printf("    -t, --tokenize  - print the scanned tokens and exit\n");
+	printf("    -s, --syntax    - print the parsed syntax tree and exit\n");
     printf("    -v, --verbose   - increase output verbosity\n");
 }
 

@@ -11,7 +11,7 @@ class Compiler(object):
         self.path = local_file('../../compiler')
 
     def run(self, source):
-        proc = subprocess.Popen([self.path, source],
+        proc = subprocess.Popen([self.path, '-t', source],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         return proc.communicate()
