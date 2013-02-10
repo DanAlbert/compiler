@@ -11,9 +11,11 @@ SRCDIR = ../..
 SRC =	main.cpp \
 		random.cpp \
 		token_tests.cpp \
+		symbol_table_tests.cpp \
 		$(SRCDIR)/messages.cpp \
 		$(SRCDIR)/lexer.cpp \
 		$(SRCDIR)/token.cpp \
+		$(SRCDIR)/symbol_table.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3
@@ -39,10 +41,10 @@ ALL_CFLAGS = $(CFLAGS) $(GENDEPFLAGS)
 OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
 all: $(NAME)
-default: $(NAME)
+default: all
 
 # Link object files to executable
-$(NAME): $(OBJ)
+$(NAME): $(OBJ) ../gtest/lib/libgtest.a
 	@echo 'LD: $@'
 	@$(CXX) -o $@ $(ALL_CFLAGS) $^ $(LDFLAGS)
 
@@ -51,8 +53,12 @@ $(OBJDIR)/%.o : %.cpp
 	@echo 'CC: $<'
 	@$(CXX) -c $(ALL_CFLAGS) $< -o $@ 
 
+../gtest/lib/libgtest.a:
+	make -C .. gtest/lib/libgtest.a
+
 clean:
 	$(REMOVE) $(NAME)
+	-$(REMOVE) *.pyc
 	$(REMOVE) $(SRC:%.cpp=$(OBJDIR)/%.o)
 	$(REMOVE) $(SRC:.cpp=.d)
 	$(REMOVEDIR) $(DEPDIR)

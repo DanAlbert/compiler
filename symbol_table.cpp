@@ -2,9 +2,19 @@
 
 #include <assert.h>
 
+SymbolTable::SymbolTable(void)
+{
+}
+
+const Token& SymbolTable::operator[](const std::string& id) const
+{
+	return this->Get(id);
+}
+
 void SymbolTable::Add(const Token& token)
 {
-	this->symbols[token.GetToken()] = token;
+	assert(!this->Contains(token.GetToken()));
+	this->symbols.insert( {{token.GetToken(), token }});;
 }
 
 bool SymbolTable::Contains(const std::string& id) const
@@ -12,9 +22,9 @@ bool SymbolTable::Contains(const std::string& id) const
 	return this->symbols.find(id) != this->symbols.end();
 }
 
-Token& SymbolTable::Get(const std::string& id)
+const Token& SymbolTable::Get(const std::string& id) const
 {
 	assert(this->Contains(id));
-	return this->symbols[id];
+	return this->symbols.find(id)->second;
 }
 

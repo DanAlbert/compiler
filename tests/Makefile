@@ -12,8 +12,10 @@ gtest/src/gtest-all.o: gtest/Makefile
 	make -C gtest
 
 clean:
+	-$(REMOVE) *.pyc
 	-make -C gtest/ clean
 	-rm gtest/lib/libgtest.a
+	make -C functional/ clean
 	make -C unit/ clean
 
 distclean: clean

@@ -1,4 +1,5 @@
 *.py[cod]
+gtest-1.6.0/autom4te.cache/
 
 # C extensions
 *.so

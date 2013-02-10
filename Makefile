@@ -13,6 +13,7 @@ SRC =	main.cpp \
 		messages.cpp \
 		lexer.cpp \
 		token.cpp \
+		symbol_table.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3

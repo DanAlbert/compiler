@@ -13,11 +13,12 @@ class SymbolTable
 {
 public:
 	SymbolTable(void);
-	~SymbolTable(void);
 	
+	const Token& operator[](const std::string& id) const;
+
 	void Add(const Token& token);
 	bool Contains(const std::string& id) const;
-	Token& Get(const std::string& id);
+	const Token& Get(const std::string& id) const;
 
 private:
 	std::unordered_map<std::string, Token> symbols;
