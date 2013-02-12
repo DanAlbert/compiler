@@ -14,6 +14,7 @@ SRC =	main.cpp \
 		lexer.cpp \
 		token.cpp \
 		symbol_table.cpp \
+		syntax_tree.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3
