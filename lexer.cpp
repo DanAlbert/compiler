@@ -19,7 +19,7 @@ Lexer::Lexer(void) :
 
 Lexer::~Lexer(void) throw()
 {
-	if (this->file)
+if (this->file)
 	{
 		fclose(this->file);
 		this->file = NULL;
@@ -28,11 +28,22 @@ Lexer::~Lexer(void) throw()
 
 bool Lexer::HasNext(void)
 {
-	return this->current != EOF;
+	return (pushback_tokens.size() != 0 )|| (this->current != EOF);
+}
+
+void Lexer::PushBack(Token& t)
+{
+	pushback_tokens.push_back(t);
 }
 
 const Token Lexer::Next(void)
 {
+	if (pushback_tokens.size() != 0) {
+		Token t = pushback_tokens.back();
+		pushback_tokens.pop_back();
+		return t;
+	}
+
 	assert(this->HasNext());
 	assert(!isspace(this->current));
 	assert(!iscomment(this->current));

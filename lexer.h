@@ -67,6 +67,11 @@ public:
 	 */
 	const Token Next(void);
 
+     /**
+      *  Allows tokens to be pushed back from the parser
+      */
+     void PushBack(Token& t);
+
 private:
 	/**
 	 * The file being scanned.
@@ -77,6 +82,11 @@ private:
 	 * The character the scanner is currently operating on.
 	 */
 	char current;
+
+    /**
+     * Tokens pushed back by the parser; will be returned by subsequent call to Next()
+     */
+    std::vector<Token> pushback_tokens;
 
 	/**
 	 * Advances to the next character in the stream.
