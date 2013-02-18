@@ -18,6 +18,8 @@ public:
 	inline const Token& GetToken(void) const;
 	inline const SyntaxNode* GetParent(void) const;
 
+	void Print(unsigned int level = 0, FILE* file = stdout) const;
+
 	SyntaxNode& AddChild(const Token& token);
 	void SetChildren(const std::vector<Token>& tokens);
 	void RemoveChild(const Token& token);

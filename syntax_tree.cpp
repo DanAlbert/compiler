@@ -1,5 +1,7 @@
 #include "syntax_tree.h"
 
+#include <assert.h>
+
 SyntaxNode::SyntaxNode(const Token& token, const SyntaxNode* parent) :
 	token(token),
 	parent(parent)
@@ -14,6 +16,12 @@ inline const Token& SyntaxNode::GetToken(void) const
 inline const SyntaxNode* SyntaxNode::GetParent(void) const
 {
 	return this->parent;
+}
+
+void SyntaxNode::Print(unsigned int level, FILE* file) const
+{
+	assert(file);
+	fprintf(file, "[STUB] Syntax Tree\n");
 }
 
 SyntaxNode& SyntaxNode::AddChild(const Token& token)
@@ -34,6 +42,7 @@ void SyntaxNode::SetChildren(const std::vector<Token>& tokens)
 
 void SyntaxNode::RemoveChild(const Token& token)
 {
+	// TODO: should probably assert that the token is a child of the node
 	for (auto it = this->children.begin(); it != this->children.end(); ++it)
 	{
 		if (it->GetToken() == token)
@@ -79,12 +88,14 @@ inline std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
 	return this->children.cend();
 }
 
-inline std::vector<SyntaxNode>::const_reverse_iterator SyntaxNode::crbegin(void) const
+inline std::vector<SyntaxNode>::const_reverse_iterator
+SyntaxNode::crbegin(void) const
 {
 	return this->children.crbegin();
 }
 
-inline std::vector<SyntaxNode>::const_reverse_iterator SyntaxNode::crend(void) const
+inline std::vector<SyntaxNode>::const_reverse_iterator
+SyntaxNode::crend(void) const
 {
 	return this->children.crend();
 }
