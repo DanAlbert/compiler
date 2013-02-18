@@ -1,27 +1,28 @@
 #include "syntax_tree.h"
 
-SyntaxTree::Node::Node(const Token& token, const Node* parent) :
+SyntaxNode::SyntaxNode(const Token& token, const SyntaxNode* parent) :
 	token(token),
 	parent(parent)
 {
 }
 
-inline const Token& SyntaxTree::Node::GetToken(void) const
+inline const Token& SyntaxNode::GetToken(void) const
 {
 	return this->token;
 }
 
-inline const SyntaxTree::Node* SyntaxTree::Node::GetParent(void) const
+inline const SyntaxNode* SyntaxNode::GetParent(void) const
 {
 	return this->parent;
 }
 
-void SyntaxTree::Node::AddChild(const Token& token)
+SyntaxNode& SyntaxNode::AddChild(const Token& token)
 {
-	this->children.push_back(Node(token, this));
+	this->children.push_back(SyntaxNode(token, this));
+	return this->children.back(); // TODO: make this thread safe
 }
 
-void SyntaxTree::Node::SetChildren(const std::vector<Token>& tokens)
+void SyntaxNode::SetChildren(const std::vector<Token>& tokens)
 {
 	this->RemoveChildren();
 
@@ -31,7 +32,7 @@ void SyntaxTree::Node::SetChildren(const std::vector<Token>& tokens)
 	}
 }
 
-void SyntaxTree::Node::RemoveChild(const Token& token)
+void SyntaxNode::RemoveChild(const Token& token)
 {
 	for (auto it = this->children.begin(); it != this->children.end(); ++it)
 	{
@@ -43,98 +44,48 @@ void SyntaxTree::Node::RemoveChild(const Token& token)
 	}
 }
 
-void SyntaxTree::Node::RemoveChildren(void)
+void SyntaxNode::RemoveChildren(void)
 {
 	this->children.clear();
 }
 
-inline std::vector<SyntaxTree::Node>::iterator SyntaxTree::Node::begin(void)
+inline std::vector<SyntaxNode>::iterator SyntaxNode::begin(void)
 {
 	return this->children.begin();
 }
 
-inline std::vector<SyntaxTree::Node>::iterator SyntaxTree::Node::end(void)
+inline std::vector<SyntaxNode>::iterator SyntaxNode::end(void)
 {
 	return this->children.end();
 }
 
-inline std::vector<SyntaxTree::Node>::reverse_iterator SyntaxTree::Node::rbegin(void)
+inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rbegin(void)
 {
 	return this->children.rbegin();
 }
 
-inline std::vector<SyntaxTree::Node>::reverse_iterator SyntaxTree::Node::rend(void)
+inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rend(void)
 {
 	return this->children.rend();
 }
 
-inline std::vector<SyntaxTree::Node>::const_iterator SyntaxTree::Node::cbegin(void) const
+inline std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const
 {
 	return this->children.cbegin();
 }
 
-inline std::vector<SyntaxTree::Node>::const_iterator SyntaxTree::Node::cend(void) const
+inline std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
 {
 	return this->children.cend();
 }
 
-inline std::vector<SyntaxTree::Node>::const_reverse_iterator SyntaxTree::Node::crbegin(void) const
+inline std::vector<SyntaxNode>::const_reverse_iterator SyntaxNode::crbegin(void) const
 {
 	return this->children.crbegin();
 }
 
-inline std::vector<SyntaxTree::Node>::const_reverse_iterator SyntaxTree::Node::crend(void) const
+inline std::vector<SyntaxNode>::const_reverse_iterator SyntaxNode::crend(void) const
 {
 	return this->children.crend();
-}
-
-SyntaxTree::SyntaxTree(const Token& token) :
-	root(token)
-{
-}
-
-inline const SyntaxTree::Node& SyntaxTree::GetRoot(void) const
-{
-	return this->root;
-}
-
-inline std::vector<SyntaxTree::Node>::iterator SyntaxTree::begin(void)
-{
-	return this->root.begin();
-}
-
-inline std::vector<SyntaxTree::Node>::iterator SyntaxTree::end(void)
-{
-	return this->root.end();
-}
-
-inline std::vector<SyntaxTree::Node>::reverse_iterator SyntaxTree::rbegin(void)
-{
-	return this->root.rbegin();
-}
-
-inline std::vector<SyntaxTree::Node>::reverse_iterator SyntaxTree::rend(void)
-{
-	return this->root.rend();
-}
-
-inline std::vector<SyntaxTree::Node>::const_iterator SyntaxTree::cbegin(void) const
-{
-	return this->GetRoot().cbegin();
-}
-
-inline std::vector<SyntaxTree::Node>::const_iterator SyntaxTree::cend(void) const
-{
-	return this->GetRoot().cend();
-}
-
-inline std::vector<SyntaxTree::Node>::const_reverse_iterator SyntaxTree::crbegin(void) const
-{
-	return this->GetRoot().crbegin();
-}
-
-inline std::vector<SyntaxTree::Node>::const_reverse_iterator SyntaxTree::crend(void) const
-{
-	return this->GetRoot().crend();
 }
 

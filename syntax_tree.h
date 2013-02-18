@@ -10,52 +10,35 @@
 
 #include "token.h"
 
-class SyntaxTree
+class SyntaxNode
 {
 public:
-	class Node
-	{
-	public:
-		Node(const Token& token, const Node* parent = NULL);
+	SyntaxNode(const Token& token, const SyntaxNode* parent = NULL);
 
-		inline const Token& GetToken(void) const;
-		inline const Node* GetParent(void) const;
+	inline const Token& GetToken(void) const;
+	inline const SyntaxNode* GetParent(void) const;
 
-		void AddChild(const Token& token);
-		void SetChildren(const std::vector<Token>& tokens);
-		void RemoveChild(const Token& token);
-		void RemoveChildren(void);
+	SyntaxNode& AddChild(const Token& token);
+	void SetChildren(const std::vector<Token>& tokens);
+	void RemoveChild(const Token& token);
+	void RemoveChildren(void);
 
-		inline std::vector<Node>::iterator begin(void);
-		inline std::vector<Node>::iterator end(void);
-		inline std::vector<Node>::reverse_iterator rbegin(void);
-		inline std::vector<Node>::reverse_iterator rend(void);
-		inline std::vector<Node>::const_iterator cbegin(void) const;
-		inline std::vector<Node>::const_iterator cend(void) const;
-		inline std::vector<Node>::const_reverse_iterator crbegin(void) const;
-		inline std::vector<Node>::const_reverse_iterator crend(void) const;
-
-	private:
-		std::vector<Node> children;
-		Token token;
-		const Node* parent;
-	};
-	
-	SyntaxTree(const Token& token);
-	inline const Node& GetRoot(void) const;
-
-	inline std::vector<Node>::iterator begin(void);
-	inline std::vector<Node>::iterator end(void);
-	inline std::vector<Node>::reverse_iterator rbegin(void);
-	inline std::vector<Node>::reverse_iterator rend(void);
-	inline std::vector<Node>::const_iterator cbegin(void) const;
-	inline std::vector<Node>::const_iterator cend(void) const;
-	inline std::vector<Node>::const_reverse_iterator crbegin(void) const;
-	inline std::vector<Node>::const_reverse_iterator crend(void) const;
+	inline std::vector<SyntaxNode>::iterator begin(void);
+	inline std::vector<SyntaxNode>::iterator end(void);
+	inline std::vector<SyntaxNode>::reverse_iterator rbegin(void);
+	inline std::vector<SyntaxNode>::reverse_iterator rend(void);
+	inline std::vector<SyntaxNode>::const_iterator cbegin(void) const;
+	inline std::vector<SyntaxNode>::const_iterator cend(void) const;
+	inline std::vector<SyntaxNode>::const_reverse_iterator crbegin(void) const;
+	inline std::vector<SyntaxNode>::const_reverse_iterator crend(void) const;
 
 private:
-	Node root;
+	std::vector<SyntaxNode> children;
+	Token token;
+	const SyntaxNode* parent;
 };
+
+typedef SyntaxNode SyntaxTree;
 
 #endif // SYNTAX_TREE_H
 
