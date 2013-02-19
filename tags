@@ -1,0 +1,116 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Add	symbol_table.cpp	/^void SymbolTable::Add(const Token& token)$/;"	f	class:SymbolTable
+AddChild	syntax_tree.cpp	/^SyntaxNode& SyntaxNode::AddChild(const SyntaxNode& node)$/;"	f	class:SyntaxNode
+CLAMP	main.cpp	53;"	d	file:
+CRITICAL	messages.h	121;"	d
+Contains	symbol_table.cpp	/^bool SymbolTable::Contains(const std::string& id) const$/;"	f	class:SymbolTable
+DEBUG	messages.h	164;"	d
+DEFAULT_MODE	main.cpp	55;"	d	file:
+ERROR	messages.h	132;"	d
+F	parser.cpp	/^Node Parser::F()$/;"	f	class:Parser
+Get	symbol_table.cpp	/^const Token& SymbolTable::Get(const std::string& id) const$/;"	f	class:SymbolTable
+GetParent	syntax_tree.cpp	/^inline const SyntaxNode* SyntaxNode::GetParent(void) const$/;"	f	class:SyntaxNode
+GetToken	syntax_tree.cpp	/^inline const Token& SyntaxNode::GetToken(void) const$/;"	f	class:SyntaxNode
+GetToken	token.h	/^	inline const std::string GetToken(void) const$/;"	f	class:Token
+GetType	token.h	/^	inline Type GetType(void) const$/;"	f	class:Token
+HasNext	lexer.cpp	/^bool Lexer::HasNext(void)$/;"	f	class:Lexer
+INFO	messages.h	154;"	d
+Init	lexer.cpp	/^bool Lexer::Init(const char* file)$/;"	f	class:Lexer
+LEXER_H	lexer.h	9;"	d
+LOGLEVEL_CRITICAL	messages.h	19;"	d
+LOGLEVEL_DEBUG	messages.h	51;"	d
+LOGLEVEL_ERROR	messages.h	27;"	d
+LOGLEVEL_INFO	messages.h	43;"	d
+LOGLEVEL_MAX	messages.h	65;"	d
+LOGLEVEL_MIN	messages.h	58;"	d
+LOGLEVEL_STR_LEN	messages.cpp	6;"	d	file:
+LOGLEVEL_WARNING	messages.h	35;"	d
+Lexer	lexer.cpp	/^Lexer::Lexer(void) :$/;"	f	class:Lexer
+Lexer	lexer.h	/^class Lexer$/;"	c
+MAX	main.cpp	40;"	d	file:
+MESSAGES_H	messages.h	9;"	d
+MIN	main.cpp	28;"	d	file:
+Mode	main.cpp	/^enum class Mode$/;"	c	file:
+Next	lexer.cpp	/^const Token Lexer::Next(void)$/;"	f	class:Lexer
+Number	token.h	/^		Number,$/;"	m	class:Token::Type
+Parse	main.cpp	/^	Parse,$/;"	m	class:Mode	file:
+Parser	parser.cpp	/^class Parser {$/;"	c	file:
+Print	syntax_tree.cpp	/^void SyntaxNode::Print(unsigned int level, FILE* file) const$/;"	f	class:SyntaxNode
+Print	token.cpp	/^void Token::Print(FILE* file) const$/;"	f	class:Token
+PushBack	lexer.cpp	/^void Lexer::PushBack(Token& t)$/;"	f	class:Lexer
+RemoveChild	syntax_tree.cpp	/^void SyntaxNode::RemoveChild(const Token& token)$/;"	f	class:SyntaxNode
+RemoveChildren	syntax_tree.cpp	/^void SyntaxNode::RemoveChildren(void)$/;"	f	class:SyntaxNode
+SYMBOL_TABLE_H	symbol_table.h	6;"	d
+SYNTAX	lexer.cpp	/^const char Lexer::SYNTAX[] = "()";$/;"	m	class:Lexer	file:
+SYNTAX	lexer.h	/^	static const char SYNTAX[];$/;"	m	class:Lexer
+SYNTAX_TREE_H	syntax_tree.h	7;"	d
+Scan	main.cpp	/^	Scan,$/;"	m	class:Mode	file:
+SetChildren	syntax_tree.cpp	/^void SyntaxNode::SetChildren(const std::vector<SyntaxNode>& children)$/;"	f	class:SyntaxNode
+String	token.h	/^		String,$/;"	m	class:Token::Type
+Symbol	token.h	/^		Symbol,$/;"	m	class:Token::Type
+SymbolTable	symbol_table.cpp	/^SymbolTable::SymbolTable(void)$/;"	f	class:SymbolTable
+SymbolTable	symbol_table.h	/^class SymbolTable$/;"	c
+Syntax	token.h	/^		Syntax,$/;"	m	class:Token::Type
+SyntaxNode	syntax_tree.cpp	/^SyntaxNode::SyntaxNode(const SyntaxNode& other) :$/;"	f	class:SyntaxNode
+SyntaxNode	syntax_tree.cpp	/^SyntaxNode::SyntaxNode(const Token& token, const SyntaxNode* parent) :$/;"	f	class:SyntaxNode
+SyntaxNode	syntax_tree.h	/^class SyntaxNode$/;"	c
+T	parser.cpp	/^Node Parser::T() {return lex.Next();} \/\/Hack to get it to compile$/;"	f	class:Parser
+TOKEN_H	token.h	9;"	d
+ToString	token.cpp	/^const std::string Token::ToString(void) const$/;"	f	class:Token
+Token	token.cpp	/^Token::Token(Type type, std::string token)$/;"	f	class:Token
+Token	token.cpp	/^Token::Token(const Token& token)$/;"	f	class:Token
+Token	token.h	/^class Token$/;"	c
+TokenTypeToString	token.cpp	/^std::string TokenTypeToString(Token::Type type)$/;"	f
+Type	token.h	/^	enum class Type$/;"	c	class:Token
+WARNING	messages.h	143;"	d
+begin	syntax_tree.cpp	/^inline std::vector<SyntaxNode>::iterator SyntaxNode::begin(void)$/;"	f	class:SyntaxNode
+cbegin	syntax_tree.cpp	/^inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const$/;"	f	class:SyntaxNode
+cend	syntax_tree.cpp	/^inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const$/;"	f	class:SyntaxNode
+children	syntax_tree.h	/^	std::vector<SyntaxNode> children;$/;"	m	class:SyntaxNode
+crbegin	syntax_tree.cpp	/^SyntaxNode::crbegin(void) const$/;"	f	class:SyntaxNode
+crend	syntax_tree.cpp	/^SyntaxNode::crend(void) const$/;"	f	class:SyntaxNode
+current	lexer.h	/^	char current;$/;"	m	class:Lexer
+end	syntax_tree.cpp	/^inline std::vector<SyntaxNode>::iterator SyntaxNode::end(void)$/;"	f	class:SyntaxNode
+error_message	messages.cpp	/^void error_message(int level,$/;"	f
+expect	parser.cpp	/^void Parser::expect(Token t, char *expect_string)$/;"	f	class:Parser
+file	lexer.h	/^	FILE* file;$/;"	m	class:Lexer
+findNext	lexer.cpp	/^void Lexer::findNext(void)$/;"	f	class:Lexer
+finishToken	lexer.cpp	/^void Lexer::finishToken(void)$/;"	f	class:Lexer
+getNext	lexer.cpp	/^void Lexer::getNext(void)$/;"	f	class:Lexer
+get_log_level	messages.cpp	/^int get_log_level(void)$/;"	f
+iscomment	lexer.cpp	/^bool iscomment(char c)$/;"	f
+issyntax	lexer.cpp	/^bool issyntax(char c)$/;"	f
+lex	parser.cpp	/^Lexer lex;$/;"	v
+log_level	messages.cpp	/^int log_level = 3;$/;"	v
+log_level_to_str	messages.cpp	/^void log_level_to_str(int level, char* buf, int len)$/;"	f
+main	main.cpp	/^int main(int argc, char **argv)$/;"	f
+match	lexer.h	/^	inline void match(void) { getNext(); }$/;"	f	class:Lexer
+message	messages.cpp	/^void message(int level, const char* format, ...)$/;"	f
+operator !=	token.cpp	/^bool Token::operator!=(const Token& other) const$/;"	f	class:Token
+operator =	token.cpp	/^Token& Token::operator=(const Token& rhs)$/;"	f	class:Token
+operator ==	token.cpp	/^bool Token::operator==(const Token& other) const$/;"	f	class:Token
+operator []	symbol_table.cpp	/^const Token& SymbolTable::operator[](const std::string& id) const$/;"	f	class:SymbolTable
+parent	syntax_tree.h	/^	const SyntaxNode* parent;$/;"	m	class:SyntaxNode
+parseNumber	lexer.cpp	/^const Token Lexer::parseNumber(void)$/;"	f	class:Lexer
+parseString	lexer.cpp	/^const Token Lexer::parseString(void)$/;"	f	class:Lexer
+parseSymbol	lexer.cpp	/^const Token Lexer::parseSymbol(void)$/;"	f	class:Lexer
+parseSyntax	lexer.cpp	/^const Token Lexer::parseSyntax(void)$/;"	f	class:Lexer
+printParse	main.cpp	/^void printParse(const char* file)$/;"	f
+printScan	main.cpp	/^void printScan(const char* file)$/;"	f
+pushback_tokens	lexer.h	/^    std::vector<Token> pushback_tokens;$/;"	m	class:Lexer
+rbegin	syntax_tree.cpp	/^inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rbegin(void)$/;"	f	class:SyntaxNode
+rend	syntax_tree.cpp	/^inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rend(void)$/;"	f	class:SyntaxNode
+set_log_level	messages.cpp	/^void set_log_level(int level)$/;"	f
+symbols	symbol_table.h	/^	std::unordered_map<std::string, Token> symbols;$/;"	m	class:SymbolTable
+token	syntax_tree.h	/^	Token token;$/;"	m	class:SyntaxNode
+token	token.h	/^	std::string token;$/;"	m	class:Token
+translate	main.cpp	/^void translate(const char* file)$/;"	f
+tree	parser.cpp	/^		SyntaxTree tree;$/;"	m	class:Parser	file:
+type	token.h	/^	Type type;$/;"	m	class:Token
+usage	main.cpp	/^void usage(void)$/;"	f
+~Lexer	lexer.cpp	/^Lexer::~Lexer(void) throw()$/;"	f	class:Lexer

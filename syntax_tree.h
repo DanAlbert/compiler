@@ -21,7 +21,7 @@ public:
 
 	void Print(unsigned int level = 0, FILE* file = stdout) const;
 
-	//SyntaxNode& AddChild(const Token& token);
+	SyntaxNode& AddChild(const Token& token);
 	SyntaxNode& AddChild(const SyntaxNode& node);
 	void SetChildren(const std::vector<SyntaxNode>& children);
 	void RemoveChild(const Token& token);

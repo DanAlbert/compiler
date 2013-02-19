@@ -31,16 +31,15 @@ inline const SyntaxNode* SyntaxNode::GetParent(void) const
 void SyntaxNode::Print(unsigned int level, FILE* file) const
 {
 	assert(file);
+	if (level != 0) fprintf(stderr, "Fake message about level\n");
 	fprintf(file, "[STUB] Syntax Tree\n");
 }
 
-/*
 SyntaxNode& SyntaxNode::AddChild(const Token& token)
 {
 	this->children.push_back(SyntaxNode(token, this));
 	return this->children.back(); // TODO: make this thread safe
 }
-*/
 
 SyntaxNode& SyntaxNode::AddChild(const SyntaxNode& node)
 {

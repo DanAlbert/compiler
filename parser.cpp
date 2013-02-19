@@ -1,14 +1,14 @@
-#include "parser.h"
-
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "lexer.h"
+#include "syntax_tree.h"
 #include "symbol_table.h"
 #include "token.h"
+#include "messages.h"
+#include "parser.h"
 
-Lexer lex;
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
 
 /** End Productions ***
  *   F-> <endoffile> || TF
@@ -16,120 +16,154 @@ Lexer lex;
  *	 S-> () || atom || (S) || ()S || atom S || (S)S
  */
 
-
-/*
-Parser::expect(SyntaxNode& t, char *expect_string)
+Parser::Parser(const char* file)
+   : root(NULL)
 {
-	if (strcmp(t.GetToken(), expect_string) != 0){
-		fprintf(stderr, "Expected one thing, got another\n");
-		exit -1;
-	}
-}
-*/
-void Parser::F(void)
-{
-	// TODO: need to initialize the root of the tree to something in the
-	// constructor...
-	while (lex.HasNext())
+	if (!lex.Init(file))
 	{
-		tree.AddChild(T()); //understood that this means "AddChild(T());"
+		CRITICAL("Could not open file %s", file);
+		exit(EXIT_FAILURE);
 	}
 }
 
-const SyntaxNode& Parser::T(void)
+Parser::~Parser()
 {
-	// TODO: make this actually add something to the tree...
-	return SyntaxNode(lex.Next()); //Hack to get it to compile
+    // eventually delete the entire tree
 }
+
+void Parser::ParseTree()
+{
+    root = new SyntaxNode( F() );
+}
+
+
+void Parser::PrintHelper(SyntaxNode& node, int indent)
+{
+    if (indent == -999) printf("oops");
 
 #if 0
-SyntaxNode T()
+    // Print out:    T [ ( S ) ]
+    // 
+    // to show that this node is "T", and it's children are (, S, and )
+    // 
+    printf("%s  [", node.GetToken().c_str() );
+    for (int i=0; i<node.children.size(); i++)
+        printf("%s ", node.children[i].GetToken.c_str());
+    printf("]\n");
+
+    // Then for every non-terminal child (in this case, "S"), print out
+    // their information indented by one level.
+    // 
+    for (int i=0; i<node.children.size(); i++) {
+        if (node.children[i].GetType() == Token::Type::NonTerminal) 
+           PrintHelper(node.children[i], indent+4);
+    }
+#endif
+}
+
+void Parser::PrintTree()
 {
-	SyntaxNode Tnode;
+    PrintHelper(*root, 0);
+}
+
+void Parser::expect(Token t, const char *expect_string)
+{
+	if (t.GetToken() != expect_string) {
+		fprintf(stderr, "Expecting string '%s' but encountered '%s'\n",
+            expect_string, t.GetToken().c_str());
+		exit (-1);
+	}
+}
+
+SyntaxNode Parser::F()
+{
+    SyntaxNode Fnode( Token(Token::Type::NonTerminal, "F"), NULL);
+
+    while ( lex.HasNext() ) {
+       Fnode.AddChild( T() );
+    }
+    return Fnode;
+}
+
+
+SyntaxNode Parser::T()
+{
+	SyntaxNode Tnode( Token(Token::Type::NonTerminal, "T"), NULL);
 	
 	Token t = lex.Next(); //eat opening paren
 	expect (t, "(");
-	Tnode.AddChild( Node(t), &Tnode);
-	Tnode.AddChild( S() , &Tnode);
+	Tnode.AddChild( SyntaxNode(t, &Tnode) );
+
+	Tnode.AddChild( S() );
 
 	t = lex.Next(); //eat closing paren
 	expect(t, ")");
-	Tnode.AddChild( Node(t), &Tnode);
+	Tnode.AddChild( SyntaxNode(t, &Tnode) );
 
 	return Tnode;
 }
 
-SyntaxNode S()
+
+SyntaxNode Parser::S()
 {
-	Token t = lex.Next();
-	//****************** ==> () || (S) || ()S || (S)S 
-	if (t.GetToken() == "(") {              
-		AddChild(Node(t, this));  //adds the "(" to the list of children
-		Token t2 = lex.Next();
-	
-		//****************** ==> () || ()S
-		if (t2.GetToken() == ")") {      
-			AddChild(Node(t2, this));  //add the ")" to the list of children
-			Token t3 = lex.Next();
-			if (t3.GetToken() == "(") {  //then we need to parse an S
-				//somehow push back the token we just read
-				AddChild( S() );
+	SyntaxNode Snode( Token(Token::Type::NonTerminal, "S"), NULL);
+
+	Token firstToken = lex.Next();
+	// ****************** ==> () || (S) || ()S || (S)S 
+	if (firstToken.GetToken() == "(") {
+		Snode.AddChild( SyntaxNode(firstToken, &Snode) );  //adds the "(" to the list of children
+
+		Token t = lex.Next();
+		// ****************** ==> () || ()S
+		if (t.GetToken() == ")") {      
+			Snode.AddChild(SyntaxNode(t, &Snode));  //add the ")" to the list of children
+
+            // We now distinguish between () and ()S
+			Token t2 = lex.Next();
+			if (t2.GetToken() == ")") {  // this is the () case
+                lex.PushBack(t2);
+			}
+            else {                       // this is the ()S case
+				Snode.AddChild( S() );
 			}
 		}
-		//******************  ==> (S) || (S)S
+		// ******************  ==> (S) || (S)S
 		else { 
-			//somehow push back the token we just read
-			AddChild( S() );
+            lex.PushBack(t);  // this token belongs to the S production
+			Snode.AddChild( S() );
+
 			Token t4 = lex.Next();   //expect a ")"
-			if (t4.GetToken() != ")"){
-				fprintf(stderr, "Parse error: Expected a ')', but found %s\n", t4.GetToken());
-				exit(-1);
-			}
-			AddChild( Node(t4, this) );  //add the ")" token
-			Token t5 = lex.Next();       //let's see if an S is following
-			if (t5.GetToken() == '(') {  // we think that an S  will follow
-				AddChild( S() );
+            expect(t4, ")");
+			Snode.AddChild( SyntaxNode(t4, &Snode) );  //add the ")" token
+
+			Token t5 = lex.Next();       // let's see if an S is following
+            lex.PushBack(t5);
+			if (t5.GetToken() != ")") {  // we *do* have a following S production
+				Snode.AddChild( S() );
 			}
 		}
 	} 
-	/******************************  ==> atom || atom S */
-	else if (t.GetType() == Symbol) { 
-		AddChild(Node(t, this));
-		Token t6 = lex.Next();   //checking if we're followed by an S
-		if (t6.GetToken() == '(') {
-			//somehow push back the current token
-			AddChild( S() );
+
+	// ******************************  ==> atom || atom S
+	else if (firstToken.GetType() == Token::Type::Symbol) { 
+
+		Snode.AddChild(SyntaxNode(firstToken, &Snode));
+
+		Token lookAhead = lex.Next();   //checking if we're followed by an S
+        lex.PushBack(lookAhead);
+
+		if (lookAhead.GetToken() != ")") {   // then either a "(" or an atom
+			Snode.AddChild( S() );
 		}
 	} 
+
+    // *****************************  Doesn't match any production
 	else {
-		fprintf(stderr, "Expected '(' or an atom, but found '%s'\n", t.GetToken());
+		fprintf(stderr, "Expected '(' or an symbol, but found '%s'\n",
+            firstToken.GetToken().c_str());
 		exit(-1);
 	}
-}
-#endif
 
-/*
-SyntaxTree& factor(Token token)
-{
-SyntaxTree t = lexer.Next(); 
-while (lex.hasNext){
-SyntaxTree op = GetToken()
-op.addchild(t);
-op.addchild(term());
-t = op;
-}
-return t;
+    return Snode;
 }
 
-int main (int argc, char *argv[])
-{
-	if ((argc > 1) && strcmp(argv[1], "-help"))
-	{
-		fprintf(stderr, "Put your help message here\n");
-		return 0;
-	}
-	// Node root = F();
-	return 0;
-	
-}
-*/
