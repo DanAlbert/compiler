@@ -8,6 +8,16 @@ SyntaxNode::SyntaxNode(const Token& token, const SyntaxNode* parent) :
 {
 }
 
+SyntaxNode::SyntaxNode(const SyntaxNode& other) :
+	token(other.token),
+	parent(other.parent)
+{
+	for (auto it = other.cbegin(); it != other.cend(); ++it)
+	{
+		this->AddChild(*it);
+	}
+}
+
 inline const Token& SyntaxNode::GetToken(void) const
 {
 	return this->token;
@@ -24,20 +34,24 @@ void SyntaxNode::Print(unsigned int level, FILE* file) const
 	fprintf(file, "[STUB] Syntax Tree\n");
 }
 
+/*
 SyntaxNode& SyntaxNode::AddChild(const Token& token)
 {
 	this->children.push_back(SyntaxNode(token, this));
 	return this->children.back(); // TODO: make this thread safe
 }
+*/
 
-void SyntaxNode::SetChildren(const std::vector<Token>& tokens)
+SyntaxNode& SyntaxNode::AddChild(const SyntaxNode& node)
+{
+	this->children.push_back(SyntaxNode(node));
+	return this->children.back(); // TODO: make this thread safe
+}
+
+void SyntaxNode::SetChildren(const std::vector<SyntaxNode>& children)
 {
 	this->RemoveChildren();
-
-	for (auto it = tokens.begin(); it != tokens.end(); ++it)
-	{
-		this->AddChild(*it);
-	}
+	this->children = children;
 }
 
 void SyntaxNode::RemoveChild(const Token& token)
@@ -78,23 +92,23 @@ inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rend(void)
 	return this->children.rend();
 }
 
-inline std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const
+inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const
 {
 	return this->children.cbegin();
 }
 
-inline std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
+inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
 {
 	return this->children.cend();
 }
 
-inline std::vector<SyntaxNode>::const_reverse_iterator
+inline const std::vector<SyntaxNode>::const_reverse_iterator
 SyntaxNode::crbegin(void) const
 {
 	return this->children.crbegin();
 }
 
-inline std::vector<SyntaxNode>::const_reverse_iterator
+inline const std::vector<SyntaxNode>::const_reverse_iterator
 SyntaxNode::crend(void) const
 {
 	return this->children.crend();

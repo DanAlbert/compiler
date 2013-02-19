@@ -14,14 +14,16 @@ class SyntaxNode
 {
 public:
 	SyntaxNode(const Token& token, const SyntaxNode* parent = NULL);
+	SyntaxNode(const SyntaxNode& other);
 
 	inline const Token& GetToken(void) const;
 	inline const SyntaxNode* GetParent(void) const;
 
 	void Print(unsigned int level = 0, FILE* file = stdout) const;
 
-	SyntaxNode& AddChild(const Token& token);
-	void SetChildren(const std::vector<Token>& tokens);
+	//SyntaxNode& AddChild(const Token& token);
+	SyntaxNode& AddChild(const SyntaxNode& node);
+	void SetChildren(const std::vector<SyntaxNode>& children);
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);
 
@@ -29,18 +31,20 @@ public:
 	inline std::vector<SyntaxNode>::iterator end(void);
 	inline std::vector<SyntaxNode>::reverse_iterator rbegin(void);
 	inline std::vector<SyntaxNode>::reverse_iterator rend(void);
-	inline std::vector<SyntaxNode>::const_iterator cbegin(void) const;
-	inline std::vector<SyntaxNode>::const_iterator cend(void) const;
-	inline std::vector<SyntaxNode>::const_reverse_iterator crbegin(void) const;
-	inline std::vector<SyntaxNode>::const_reverse_iterator crend(void) const;
+	inline const std::vector<SyntaxNode>::const_iterator cbegin(void) const;
+	inline const std::vector<SyntaxNode>::const_iterator cend(void) const;
+
+	inline const std::vector<SyntaxNode>::const_reverse_iterator
+		crbegin(void) const;
+
+	inline const std::vector<SyntaxNode>::const_reverse_iterator
+		crend(void) const;
 
 private:
 	std::vector<SyntaxNode> children;
 	Token token;
 	const SyntaxNode* parent;
 };
-
-typedef SyntaxNode SyntaxTree;
 
 #endif // SYNTAX_TREE_H
 

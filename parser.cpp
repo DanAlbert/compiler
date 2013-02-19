@@ -1,11 +1,12 @@
-#include "lexer.h"
-#include "syntax_tree.h"
-#include "symbol_table.h"
-#include "token.h"
+#include "parser.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
+
+#include "lexer.h"
+#include "symbol_table.h"
+#include "token.h"
 
 Lexer lex;
 
@@ -16,19 +17,8 @@ Lexer lex;
  */
 
 
-class Parser {
-	public:
-		Parser();
-		void F();
-		SyntaxTree::Node T();
-		SyntaxTree::Node S();
-
-	private:
-		SyntaxTree tree;
-};
-
 /*
-Parser::expect(SyntaxTree::Node& t, char *expect_string)
+Parser::expect(SyntaxNode& t, char *expect_string)
 {
 	if (strcmp(t.GetToken(), expect_string) != 0){
 		fprintf(stderr, "Expected one thing, got another\n");
@@ -36,19 +26,26 @@ Parser::expect(SyntaxTree::Node& t, char *expect_string)
 	}
 }
 */
-void Parser::F()
+void Parser::F(void)
 {
-    while ( lex.HasNext() ) {
-       tree.GetRoot().AddChild( T() ); //understood that this means "AddChild(T());"
-    }
+	// TODO: need to initialize the root of the tree to something in the
+	// constructor...
+	while (lex.HasNext())
+	{
+		tree.AddChild(T()); //understood that this means "AddChild(T());"
+	}
 }
 
-SyntaxTree::Node Parser::T() {return lex.Next();} //Hack to get it to compile
+const SyntaxNode& Parser::T(void)
+{
+	// TODO: make this actually add something to the tree...
+	return SyntaxNode(lex.Next()); //Hack to get it to compile
+}
 
 #if 0
-SyntaxTree::Node T()
+SyntaxNode T()
 {
-	SyntaxTree::Node Tnode;
+	SyntaxNode Tnode;
 	
 	Token t = lex.Next(); //eat opening paren
 	expect (t, "(");
@@ -62,7 +59,7 @@ SyntaxTree::Node T()
 	return Tnode;
 }
 
-SyntaxTree::Node S()
+SyntaxNode S()
 {
 	Token t = lex.Next();
 	//****************** ==> () || (S) || ()S || (S)S 
@@ -130,9 +127,9 @@ int main (int argc, char *argv[])
 	{
 		fprintf(stderr, "Put your help message here\n");
 		return 0;
-    }
-    // Node root = F();
+	}
+	// Node root = F();
 	return 0;
-    
+	
 }
 */
