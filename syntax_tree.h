@@ -40,8 +40,10 @@ public:
 	inline const std::vector<SyntaxNode>::const_reverse_iterator
 		crend(void) const;
 
-private:
 	std::vector<SyntaxNode> children;
+
+private:
+	//std::vector<SyntaxNode> children;
 	Token token;
 	const SyntaxNode* parent;
 };

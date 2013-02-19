@@ -36,29 +36,27 @@ void Parser::ParseTree()
     root = new SyntaxNode( F() );
 }
 
-
 void Parser::PrintHelper(SyntaxNode& node, int indent)
 {
     if (indent == -999) printf("oops");
 
-#if 0
     // Print out:    T [ ( S ) ]
-    // 
-    // to show that this node is "T", and it's children are (, S, and )
-    // 
-    printf("%s  [", node.GetToken().c_str() );
+    //
+    // To show that this node is "T", and it's children are '(', S, and ')'
+    //
+    printf("%s  [", node.GetToken().GetToken().c_str() );
     for (int i=0; i<node.children.size(); i++)
-        printf("%s ", node.children[i].GetToken.c_str());
+        printf("%*s%s ", indent,"", node.children[i].GetToken().GetToken().c_str());
     printf("]\n");
 
     // Then for every non-terminal child (in this case, "S"), print out
+    //
     // their information indented by one level.
-    // 
+    //
     for (int i=0; i<node.children.size(); i++) {
-        if (node.children[i].GetType() == Token::Type::NonTerminal) 
+        if (node.children[i].GetToken().GetType() == Token::Type::NonTerminal) 
            PrintHelper(node.children[i], indent+4);
     }
-#endif
 }
 
 void Parser::PrintTree()
@@ -77,6 +75,7 @@ void Parser::expect(Token t, const char *expect_string)
 
 SyntaxNode Parser::F()
 {
+	//print out "in F"
     SyntaxNode Fnode( Token(Token::Type::NonTerminal, "F"), NULL);
 
     while ( lex.HasNext() ) {
@@ -88,6 +87,7 @@ SyntaxNode Parser::F()
 
 SyntaxNode Parser::T()
 {
+	//print out "in T"
 	SyntaxNode Tnode( Token(Token::Type::NonTerminal, "T"), NULL);
 	
 	Token t = lex.Next(); //eat opening paren
@@ -106,6 +106,7 @@ SyntaxNode Parser::T()
 
 SyntaxNode Parser::S()
 {
+	//print out "in S"
 	SyntaxNode Snode( Token(Token::Type::NonTerminal, "S"), NULL);
 
 	Token firstToken = lex.Next();
