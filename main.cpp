@@ -13,6 +13,7 @@
 
 #include "lexer.h"
 #include "messages.h"
+#include "syntax_tree.h"
  
 /**
  * @def MIN
@@ -208,6 +209,8 @@ void printParse(const char* file)
 	assert(file);
 	INFO("parsing %s", file);
 	WARNING("printParse() is not yet implemented");
+	SyntaxNode node(Token(Token::Type::Symbol, "foo"));
+	node.Print();
 }
 
 void usage(void)
