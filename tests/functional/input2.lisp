@@ -1,12 +1,18 @@
+;T ()
+( () ) 
+;(S)
+( ( word) )
+;()S
+( () word ) 
+;(S)S
+( (word1) word2 )
+;((()))
+( ( ( ) ) )
+;(()S)
+( ( () word) )
+;( ( ( S ) ) S )
+( ( ( S ) ) S )
 
 
 
-
-
-
-(defun guess-my-number ()
-     (ash (+ *small* *big*) -1))
-
-(defun smaller ()
-     (setf *big* (1- (guess-my-number)))
 

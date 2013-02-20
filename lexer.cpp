@@ -33,7 +33,7 @@ bool Lexer::HasNext(void)
 
 void Lexer::PushBack(Token& t)
 {
-	fprintf(stderr, "Pushback: %s\n", t.ToString().c_str() );//DEBUG
+	DEBUG("Pushback: %s", t.ToString().c_str() );
 	pushback_tokens.push_back(t);
 }
 
