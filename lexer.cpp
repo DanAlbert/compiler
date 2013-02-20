@@ -33,13 +33,12 @@ bool Lexer::HasNext(void)
 
 void Lexer::PushBack(Token& t)
 {
-	//print in pushback
+	fprintf(stderr, "Pushback: %s\n", t.ToString().c_str() );//DEBUG
 	pushback_tokens.push_back(t);
 }
 
 const Token Lexer::Next(void)
 {
-	//print in Next
 	if (pushback_tokens.size() != 0) {
 		Token t = pushback_tokens.back();
 		pushback_tokens.pop_back();

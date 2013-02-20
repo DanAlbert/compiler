@@ -71,6 +71,9 @@ std::string TokenTypeToString(Token::Type type)
 	case Token::Type::Symbol:
 		return std::string("symbol");
 		break;
+	case Token::Type::NonTerminal:
+		return std::string("nonterminal");
+		break;
 	default:
 		ERROR("invalid token");
 		exit(EXIT_FAILURE);

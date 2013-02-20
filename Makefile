@@ -18,7 +18,7 @@ SRC =	main.cpp \
 		parser.cpp \
 
 DEBUG = -g
-OPTIMIZATION = -O3
+OPTIMIZATION = -O3  
 CSTANDARD = -std=c++0x
 INCLUDEDIRS = 
 OBJDIR = obj

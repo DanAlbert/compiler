@@ -81,10 +81,11 @@ void Parser::expect(Token t, const char *expect_string)
 
 SyntaxNode Parser::F()
 {
-	//print out "in F"
+	fprintf(stderr, "In F\n");//DEBUG
     SyntaxNode Fnode( Token(Token::Type::NonTerminal, "F"), NULL);
 
     while ( lex.HasNext() ) {
+	   fprintf(stderr, "In F, about to call T\n"); //DEBUG
        Fnode.AddChild( T() );
     }
     return Fnode;
@@ -93,16 +94,17 @@ SyntaxNode Parser::F()
 
 SyntaxNode Parser::T()
 {
-	//print out "in T"
 	SyntaxNode Tnode( Token(Token::Type::NonTerminal, "T"), NULL);
 	
 	Token t = lex.Next(); //eat opening paren
+	fprintf(stderr, "In T, Token: %s\n", t.ToString().c_str());//DEBUG
 	expect (t, "(");
 	Tnode.AddChild( SyntaxNode(t, &Tnode) );
 
 	Tnode.AddChild( S() );
 
 	t = lex.Next(); //eat closing paren
+	fprintf(stderr, "In T, Token: %s\n", t.ToString().c_str());//DEBUG
 	expect(t, ")");
 	Tnode.AddChild( SyntaxNode(t, &Tnode) );
 
@@ -112,25 +114,29 @@ SyntaxNode Parser::T()
 
 SyntaxNode Parser::S()
 {
-	//print out "in S"
 	SyntaxNode Snode( Token(Token::Type::NonTerminal, "S"), NULL);
 
 	Token firstToken = lex.Next();
+	fprintf(stderr, "#1 In S, Token: %s\n", firstToken.ToString().c_str());//DEBUG
 	// ****************** ==> () || (S) || ()S || (S)S 
 	if (firstToken.GetToken() == "(") {
 		Snode.AddChild( SyntaxNode(firstToken, &Snode) );  //adds the "(" to the list of children
 
 		Token t = lex.Next();
+		fprintf(stderr, "#2 In S, Token: %s\n", t.ToString().c_str()); //DEBUG
 		// ****************** ==> () || ()S
 		if (t.GetToken() == ")") {      
 			Snode.AddChild(SyntaxNode(t, &Snode));  //add the ")" to the list of children
 
             // We now distinguish between () and ()S
 			Token t2 = lex.Next();
+            lex.PushBack(t2);
+			fprintf(stderr, "#3 In S --> () | ()S, Token: %s\n", t2.ToString().c_str()); //DEBUG
 			if (t2.GetToken() == ")") {  // this is the () case
-                lex.PushBack(t2);
+			    fprintf(stderr, "#4 In S --> (), Token: %s\n", t2.ToString().c_str()); //DEBUG
 			}
             else {                       // this is the ()S case
+			    fprintf(stderr, "#5 In S --> ()S, Token: %s\n", t2.ToString().c_str()); //DEBUG
 				Snode.AddChild( S() );
 			}
 		}
@@ -139,34 +145,40 @@ SyntaxNode Parser::S()
             lex.PushBack(t);  // this token belongs to the S production
 			Snode.AddChild( S() );
 
-			Token t4 = lex.Next();   //expect a ")"
-            expect(t4, ")");
-			Snode.AddChild( SyntaxNode(t4, &Snode) );  //add the ")" token
+			Token t3 = lex.Next();   //expect a ")"
+			fprintf(stderr, "#6 In S -> (S) || (S)S, Token: %s\n", t3.ToString().c_str()); //DEBUG
+            expect(t3, ")");
+			Snode.AddChild( SyntaxNode(t3, &Snode) );  //add the ")" token
 
-			Token t5 = lex.Next();       // let's see if an S is following
-            lex.PushBack(t5);
-			if (t5.GetToken() != ")") {  // we *do* have a following S production
+			Token t4 = lex.Next();       // let's see if an S is following
+            lex.PushBack(t4);
+			fprintf(stderr, "#7 In S, lookahead Token: %s\n", t4.ToString().c_str()); //DEBUG
+			if (t4.GetToken() != ")") {  // we *do* have a following S production
+			    fprintf(stderr, "#8 In S\n"); //DEBUG
 				Snode.AddChild( S() );
 			}
 		}
 	} 
 
 	// ******************************  ==> atom || atom S
-	else if (firstToken.GetType() == Token::Type::Symbol) { 
+	else if (  firstToken.GetType() == Token::Type::Symbol 
+			|| firstToken.GetType() == Token::Type::Number) { 
 
 		Snode.AddChild(SyntaxNode(firstToken, &Snode));
 
 		Token lookAhead = lex.Next();   //checking if we're followed by an S
+		fprintf(stderr, "#9 In S, Token: %s\n", lookAhead.ToString().c_str()); //DEBUG
         lex.PushBack(lookAhead);
 
 		if (lookAhead.GetToken() != ")") {   // then either a "(" or an atom
+		    fprintf(stderr, "#10 In S\n"); //DEBUG
 			Snode.AddChild( S() );
 		}
 	} 
 
     // *****************************  Doesn't match any production
 	else {
-		fprintf(stderr, "Expected '(' or an symbol, but found '%s'\n",
+		fprintf(stderr, "Expected '(' or a symbol, but found '%s'\n",
             firstToken.GetToken().c_str());
 		exit(-1);
 	}

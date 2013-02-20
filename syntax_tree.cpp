@@ -41,6 +41,20 @@ void SyntaxNode::Print(FILE* file, unsigned int level) const
 		it->Print(file, level + 1);
 	}
 }
+/*** For a smaller indentation
+void SyntaxNode::Print(FILE* file, unsigned int level) const
+{
+	assert(file);
+    fprintf(file, "%*s", level*4, "");
+
+	this->GetToken().Print(file);
+	fprintf(file, "\n");
+	for (auto it = this->children.cbegin(); it != this->children.cend(); ++it)
+	{
+		it->Print(file, level + 1);
+	}
+}
+*/
 
 SyntaxNode* SyntaxNode::AddChild(const Token& token)
 {
