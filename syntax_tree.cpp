@@ -28,24 +28,30 @@ inline const SyntaxNode* SyntaxNode::GetParent(void) const
 	return this->parent;
 }
 
-void SyntaxNode::Print(unsigned int level, FILE* file) const
+void SyntaxNode::Print(FILE* file, unsigned int level) const
 {
 	assert(file);
-	fprintf(file, "[STUB] Syntax Tree\n");
+	for (unsigned int i = 0; i < level; i++)
+		fputc('\t', file);
+
+	this->GetToken().Print(file);
+	fprintf(file, "\n");
+	for (auto it = this->children.cbegin(); it != this->children.cend(); ++it)
+	{
+		it->Print(file, level + 1);
+	}
 }
 
-/*
-SyntaxNode& SyntaxNode::AddChild(const Token& token)
+SyntaxNode* SyntaxNode::AddChild(const Token& token)
 {
 	this->children.push_back(SyntaxNode(token, this));
-	return this->children.back(); // TODO: make this thread safe
+	return &this->children.back(); // TODO: make this thread safe
 }
-*/
 
-SyntaxNode& SyntaxNode::AddChild(const SyntaxNode& node)
+SyntaxNode* SyntaxNode::AddChild(const SyntaxNode& node)
 {
 	this->children.push_back(SyntaxNode(node));
-	return this->children.back(); // TODO: make this thread safe
+	return &this->children.back(); // TODO: make this thread safe
 }
 
 void SyntaxNode::SetChildren(const std::vector<SyntaxNode>& children)

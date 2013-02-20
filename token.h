@@ -35,7 +35,8 @@ public:
 		Number,
 		String,
 		Syntax,
-		Symbol
+		Symbol,
+		NonTerminal
 	};
 
 	/**

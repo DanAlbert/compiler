@@ -19,10 +19,10 @@ public:
 	inline const Token& GetToken(void) const;
 	inline const SyntaxNode* GetParent(void) const;
 
-	void Print(unsigned int level = 0, FILE* file = stdout) const;
+	void Print(FILE* file = stdout, unsigned int level = 0) const;
 
-	//SyntaxNode& AddChild(const Token& token);
-	SyntaxNode& AddChild(const SyntaxNode& node);
+	SyntaxNode* AddChild(const Token& token);
+	SyntaxNode* AddChild(const SyntaxNode& node);
 	void SetChildren(const std::vector<SyntaxNode>& children);
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);

@@ -3,6 +3,9 @@ compiler
 stutest.out
 proftest.out
 
+# ctags/etags files
+tags
+
 # Compiled Object files
 *.slo
 *.lo
