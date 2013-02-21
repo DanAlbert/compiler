@@ -58,7 +58,33 @@ TEST(SymbolTable, Get)
             EXPECT_EQ(*it, table.Get(it->GetToken()));
         }
     }
+}TEST(SymbolTable, GetFromParent)
+{
+    for (int i = 0; i < NRAND_TESTS; i++)
+    {
+        std::vector<Token> tokens;
+        SymbolTable parent;
+        SymbolTable table(&parent);
+        for (int i = 0; i < NELEMS; i++)
+        {
+            std::string value = RandomString(MAX_STRING_LENGTH);
+            while (table.Contains(value))
+            {
+                value = RandomString(MAX_STRING_LENGTH);
+            }
+            
+            Token token(Token::Type::Symbol, value);
+            parent.Add(token);
+            tokens.push_back(token);
+        }
+        
+    	for (auto it = tokens.begin(); it != tokens.end(); ++it)
+		{
+            EXPECT_EQ(*it, table.Get(it->GetToken()));
+        }
+    }
 }
+
 
 TEST(SymbolTable, Contains)
 {
@@ -84,5 +110,32 @@ TEST(SymbolTable, Contains)
             EXPECT_TRUE(table.Contains(it->GetToken()));
         }
     }
+
 }
 
+TEST(SymbolTable, ContainsWithParent)
+{
+    for (int i = 0; i < NRAND_TESTS; i++)
+    {
+        std::vector<Token> tokens;
+        SymbolTable parent;
+        SymbolTable table(&parent);
+        for (int i = 0; i < NELEMS; i++)
+        {
+            std::string value = RandomString(MAX_STRING_LENGTH);
+            while (table.Contains(value))
+            {
+                value = RandomString(MAX_STRING_LENGTH);
+            }
+            
+            Token token(Token::Type::Symbol, value);
+            parent.Add(token);
+            tokens.push_back(token);
+        }
+        
+    	for (auto it = tokens.begin(); it != tokens.end(); ++it)
+		{
+            EXPECT_TRUE(table.Contains(it->GetToken()));
+        }
+    }
+}

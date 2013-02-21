@@ -12,8 +12,8 @@
 class SymbolTable
 {
 public:
-	SymbolTable(void);
-	
+	SymbolTable(SymbolTable* parent = NULL);
+	inline const SymbolTable* GetParent(void) const;
 	const Token& operator[](const std::string& id) const;
 
 	void Add(const Token& token);
@@ -22,6 +22,7 @@ public:
 
 private:
 	std::unordered_map<std::string, Token> symbols;
+    SymbolTable* parent;
 };
 
 #endif // SYMBOL_TABLE_H
