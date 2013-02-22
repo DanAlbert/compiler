@@ -162,7 +162,8 @@ SyntaxNode Parser::S()
 	
 	// ******************************  ==> atom || atom S
 	else if (  firstToken.GetType() == Token::Type::Symbol 
-			|| firstToken.GetType() == Token::Type::Number) { 
+			|| firstToken.GetType() == Token::Type::Number
+			|| firstToken.GetType() == Token::Type::String) { 
 
 		Snode.AddChild(SyntaxNode(firstToken, &Snode));
 
