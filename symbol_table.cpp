@@ -56,7 +56,7 @@ const Token& SymbolTable::Get(const std::string& id) const
         }
         else
         {
-            CRITICAL("symbole undefined: %s",id);
+            CRITICAL("symbole undefined: %s", id.c_str());
             exit(EXIT_FAILURE);
         }
     }
