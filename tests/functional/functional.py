@@ -6,7 +6,6 @@ import subprocess
 import sys
 
 
-
 class Compiler(object):
     def __init__(self):
         self.path = local_file('../../compiler')
@@ -16,6 +15,7 @@ class Compiler(object):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         return proc.communicate()
+
 
 class Parse_Compiler(object):
     def __init__(self):
@@ -27,9 +27,11 @@ class Parse_Compiler(object):
                                 stderr=subprocess.PIPE)
         return proc.communicate()
 
+
 def file_text(path):
     with open(path, 'r') as open_file:
         return open_file.read()
+
 
 def local_file(path):
     base = os.path.dirname(__file__)
