@@ -9,16 +9,17 @@ class Parser
 public:
 	Parser(const char* file);
 	~Parser(void);
-	void expect(Token, const char*);
-	SyntaxNode F(void);
-	SyntaxNode T(void);
-	SyntaxNode S(void);
 	void ParseTree(void);
 	void PrintTree(FILE* file = stdout);
 
 private:
 	SyntaxNode* root;
 	Lexer lex;
+
+	void expect(Token, const char*);
+	void F(SyntaxNode* parent);
+	void T(SyntaxNode* parent);
+	void S(SyntaxNode* parent);
 };
 
 #endif // PARSER_H
