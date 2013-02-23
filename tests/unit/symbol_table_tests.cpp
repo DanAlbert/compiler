@@ -5,7 +5,7 @@
 #include "random.h"
 
 #define MAX_STRING_LENGTH 100
-#define NRAND_TESTS 10000
+#define NRAND_TESTS 1000
 #define NELEMS 100
 
 TEST(SymbolTable, Add)

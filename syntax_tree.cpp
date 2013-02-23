@@ -18,14 +18,28 @@ SyntaxNode::SyntaxNode(const SyntaxNode& other) :
 	}
 }
 
-inline const Token& SyntaxNode::GetToken(void) const
+SyntaxNode& SyntaxNode::operator=(const SyntaxNode& rhs)
 {
-	return this->token;
+	if (this == &rhs)
+		return *this;
+
+	this->token = rhs.token;
+	this->parent = rhs.parent;
+
+	this->RemoveChildren();
+	this->SetChildren(rhs.children);
+
+	return *this;
 }
 
-inline const SyntaxNode* SyntaxNode::GetParent(void) const
+bool SyntaxNode::operator==(const SyntaxNode& rhs) const
 {
-	return this->parent;
+	return (this->token == rhs.token);
+}
+
+bool SyntaxNode::operator!=(const SyntaxNode& rhs) const
+{
+	return !(*this == rhs);
 }
 
 void SyntaxNode::Print(FILE* file, unsigned int level) const
@@ -41,20 +55,6 @@ void SyntaxNode::Print(FILE* file, unsigned int level) const
 		it->Print(file, level + 1);
 	}
 }
-/*** For a smaller indentation
-void SyntaxNode::Print(FILE* file, unsigned int level) const
-{
-	assert(file);
-    fprintf(file, "%*s", level*4, "");
-
-	this->GetToken().Print(file);
-	fprintf(file, "\n");
-	for (auto it = this->children.cbegin(); it != this->children.cend(); ++it)
-	{
-		it->Print(file, level + 1);
-	}
-}
-*/
 
 SyntaxNode* SyntaxNode::AddChild(const Token& token)
 {
@@ -92,43 +92,43 @@ void SyntaxNode::RemoveChildren(void)
 	this->children.clear();
 }
 
-inline std::vector<SyntaxNode>::iterator SyntaxNode::begin(void)
+std::vector<SyntaxNode>::iterator SyntaxNode::begin(void)
 {
 	return this->children.begin();
 }
 
-inline std::vector<SyntaxNode>::iterator SyntaxNode::end(void)
+std::vector<SyntaxNode>::iterator SyntaxNode::end(void)
 {
 	return this->children.end();
 }
 
-inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rbegin(void)
+std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rbegin(void)
 {
 	return this->children.rbegin();
 }
 
-inline std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rend(void)
+std::vector<SyntaxNode>::reverse_iterator SyntaxNode::rend(void)
 {
 	return this->children.rend();
 }
 
-inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const
+const std::vector<SyntaxNode>::const_iterator SyntaxNode::cbegin(void) const
 {
 	return this->children.cbegin();
 }
 
-inline const std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
+const std::vector<SyntaxNode>::const_iterator SyntaxNode::cend(void) const
 {
 	return this->children.cend();
 }
 
-inline const std::vector<SyntaxNode>::const_reverse_iterator
+const std::vector<SyntaxNode>::const_reverse_iterator
 SyntaxNode::crbegin(void) const
 {
 	return this->children.crbegin();
 }
 
-inline const std::vector<SyntaxNode>::const_reverse_iterator
+const std::vector<SyntaxNode>::const_reverse_iterator
 SyntaxNode::crend(void) const
 {
 	return this->children.crend();

@@ -26,7 +26,7 @@ Parser::Parser(const char* file)
 	}
 }
 
-Parser::~Parser()
+Parser::~Parser(void)
 {
 	if (this->root)
 	{
@@ -35,34 +35,11 @@ Parser::~Parser()
 	}
 }
 
-void Parser::ParseTree()
+void Parser::ParseTree(void)
 {
-    root = new SyntaxNode( F() );
+    this->root = new SyntaxNode(Token(Token::Type::Symbol, "statements"));
+	this->F(this->root);
 }
-/*
-void Parser::PrintHelper(SyntaxNode& node, int indent)
-{
-    if (indent == -999) printf("oops");
-
-    // Print out:    T [ ( S ) ]
-    //
-    // To show that this node is "T", and it's children are '(', S, and ')'
-    //
-    printf("%s  [", node.GetToken().GetToken().c_str() );
-    for (int i=0; i<node.children.size(); i++)
-        printf("%*s%s ", indent,"", node.children[i].GetToken().GetToken().c_str());
-    printf("]\n");
-
-    // Then for every non-terminal child (in this case, "S"), print out
-    //
-    // their information indented by one level.
-    //
-    for (int i=0; i<node.children.size(); i++) {
-        if (node.children[i].GetToken().GetType() == Token::Type::NonTerminal) 
-           PrintHelper(node.children[i], indent+4);
-    }
-}
-*/
 
 void Parser::PrintTree(FILE* file)
 {
@@ -73,60 +50,57 @@ void Parser::PrintTree(FILE* file)
 void Parser::expect(Token t, const char *expect_string)
 {
 	if (t.GetToken() != expect_string) {
-		fprintf(stderr, "Expecting string '%s' but encountered '%s'",
-            expect_string, t.GetToken().c_str());
-		exit (-1);
+		ERROR("Expecting string '%s' but encountered '%s'",
+		      expect_string, t.GetToken().c_str());
+		exit(EXIT_FAILURE);
 	}
 }
 
-SyntaxNode Parser::F()
+void Parser::F(SyntaxNode* parent)
 {
-	DEBUG("In F");
-    SyntaxNode Fnode( Token(Token::Type::NonTerminal, "F"), NULL);
+	assert(parent);
 
-    while ( lex.HasNext() ) {
-	   DEBUG("In F, about to call T"); 
-       Fnode.AddChild( T() );
-    }
-    return Fnode;
+	DEBUG("In F");
+
+	while (lex.HasNext())
+	{
+		DEBUG("In F, about to call T"); 
+		this->T(parent);
+	}
 }
 
-
-SyntaxNode Parser::T()
+void Parser::T(SyntaxNode* parent)
 {
-	SyntaxNode Tnode( Token(Token::Type::NonTerminal, "T"), NULL);
-	
+	assert(parent);
+
 	Token t = lex.Next(); //eat opening paren
 	DEBUG("In T, Token: %s", t.ToString().c_str());
-	expect (t, "(");
-	Tnode.AddChild( SyntaxNode(t, &Tnode) );
+	expect(t, "(");
+	SyntaxNode* T = parent->AddChild(t);
 
-	Tnode.AddChild( S() );
+	this->S(T);
 
 	t = lex.Next(); //eat closing paren
 	DEBUG("In T, Token: %s", t.ToString().c_str());
 	expect(t, ")");
-	Tnode.AddChild( SyntaxNode(t, &Tnode) );
-
-	return Tnode;
+	parent->AddChild(t);
 }
 
-
-SyntaxNode Parser::S()
+void Parser::S(SyntaxNode* parent)
 {
-	SyntaxNode Snode( Token(Token::Type::NonTerminal, "S"), NULL);
+	assert(parent);
 
 	Token firstToken = lex.Next();
 	DEBUG("#1 In S, Token: %s", firstToken.ToString().c_str());
 	// ****************** ==> () || (S) || ()S || (S)S 
 	if (firstToken.GetToken() == "(") {
-		Snode.AddChild( SyntaxNode(firstToken, &Snode) );  //adds the "(" to the list of children
+		SyntaxNode* S = parent->AddChild(firstToken);  //adds the "(" to the list of children
 
 		Token t = lex.Next();
 		DEBUG("#2 In S, Token: %s", t.ToString().c_str()); 
 		// ****************** ==> () || ()S
 		if (t.GetToken() == ")") {      
-			Snode.AddChild(SyntaxNode(t, &Snode));  //add the ")" to the list of children
+			parent->AddChild(t);  //add the ")" to the list of children
 
             // We now distinguish between () and ()S
 			Token t2 = lex.Next();
@@ -137,25 +111,25 @@ SyntaxNode Parser::S()
 			}
             else {                       // this is the ()S case
 			    DEBUG("#5 In S --> ()S, Token: %s", t2.ToString().c_str());
-				Snode.AddChild( S() );
+				this->S(parent);
 			}
 		}
 		// ******************  ==> (S) || (S)S
 		else { 
             lex.PushBack(t);  // this token belongs to the S production
-			Snode.AddChild( S() );
+			this->S(S);
 
 			Token t3 = lex.Next();   //expect a ")"
 			DEBUG("#6 In S -> (S) || (S)S, Token: %s", t3.ToString().c_str()); 
             expect(t3, ")");
-			Snode.AddChild( SyntaxNode(t3, &Snode) );  //add the ")" token
+			parent->AddChild(t3);  //add the ")" token
 
 			Token t4 = lex.Next();       // let's see if an S is following
             lex.PushBack(t4);
 			DEBUG("#7 In S, lookahead Token: %s", t4.ToString().c_str());
 			if (t4.GetToken() != ")") {  // we *do* have a following S production
 			    DEBUG("#8 In S"); 
-				Snode.AddChild( S() );
+				this->S(parent);
 			}
 		}
 	} 
@@ -165,7 +139,7 @@ SyntaxNode Parser::S()
 			|| firstToken.GetType() == Token::Type::Number
 			|| firstToken.GetType() == Token::Type::String) { 
 
-		Snode.AddChild(SyntaxNode(firstToken, &Snode));
+		parent->AddChild(firstToken);
 
 		Token lookAhead = lex.Next();   //checking if we're followed by an S
 		DEBUG("#9 In S, Token: %s", lookAhead.ToString().c_str()); 
@@ -173,7 +147,7 @@ SyntaxNode Parser::S()
 
 		if (lookAhead.GetToken() != ")") {   // then either a "(" or an atom
 		    DEBUG("#10 In S"); 
-			Snode.AddChild( S() );
+			this->S(parent);
 		}
 	} 
 
@@ -183,7 +157,5 @@ SyntaxNode Parser::S()
             firstToken.GetToken().c_str());
 		exit(-1);
 	}
-
-    return Snode;
 }
 
