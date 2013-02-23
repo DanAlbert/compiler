@@ -7,23 +7,22 @@ import sys
 
 
 
-class Compiler_parser(object):
+class Compiler(object):
     def __init__(self):
         self.path = local_file('../../compiler')
 
     def run(self, source):
-        proc = subprocess.Popen([self.path, '-s', source],
+        proc = subprocess.Popen([self.path, '-t', source],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         return proc.communicate()
-
 
 class Parse_Compiler(object):
     def __init__(self):
         self.path = local_file('../../compiler')
 
     def run(self, source):
-        proc = subprocess.Popen([self.path, '-t', source],
+        proc = subprocess.Popen([self.path, '-s', source],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         return proc.communicate()
@@ -85,7 +84,6 @@ if __name__ == '__main__':
    else:
        print 'Parser tests completed successfully.'
 
-   errors = errors + parse_errors
    sys.exit(errors)
 
 
