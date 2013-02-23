@@ -18,7 +18,7 @@ class Compiler_parser(object):
         return proc.communicate()
 
 
-class Compiler(object):
+class Parse_Compiler(object):
     def __init__(self):
         self.path = local_file('../../compiler')
 
@@ -40,7 +40,7 @@ def local_file(path):
 def run_parse_tests():
     errors = 0
     golden = file_text(local_file('golden_parse.out'))
-    compiler = Compiler()
+    compiler = Parse_Compiler()
     (out, err) = compiler.run(local_file('input2.lisp'))
 
     if err:
