@@ -12,10 +12,12 @@ SRC =	main.cpp \
 		random.cpp \
 		token_tests.cpp \
 		symbol_table_tests.cpp \
+		syntax_tree_tests.cpp \
 		$(SRCDIR)/messages.cpp \
 		$(SRCDIR)/lexer.cpp \
 		$(SRCDIR)/token.cpp \
 		$(SRCDIR)/symbol_table.cpp \
+		$(SRCDIR)/syntax_tree.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3
@@ -42,6 +44,9 @@ OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
 
 all: $(NAME)
 default: all
+
+test: $(NAME)
+	./unit_tests
 
 # Link object files to executable
 $(NAME): $(OBJ) ../gtest/lib/libgtest.a

@@ -16,8 +16,19 @@ public:
 	SyntaxNode(const Token& token, const SyntaxNode* parent = NULL);
 	SyntaxNode(const SyntaxNode& other);
 
-	inline const Token& GetToken(void) const;
-	inline const SyntaxNode* GetParent(void) const;
+	inline const Token& GetToken(void) const
+	{
+		return this->token;
+	}
+
+	inline const SyntaxNode* GetParent(void) const
+	{
+		return this->parent;
+	}
+
+	SyntaxNode& operator=(const SyntaxNode& rhs);
+	bool operator==(const SyntaxNode& rhs) const;
+	bool operator!=(const SyntaxNode& rhs) const;
 
 	void Print(FILE* file = stdout, unsigned int level = 0) const;
 
@@ -27,18 +38,14 @@ public:
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);
 
-	inline std::vector<SyntaxNode>::iterator begin(void);
-	inline std::vector<SyntaxNode>::iterator end(void);
-	inline std::vector<SyntaxNode>::reverse_iterator rbegin(void);
-	inline std::vector<SyntaxNode>::reverse_iterator rend(void);
-	inline const std::vector<SyntaxNode>::const_iterator cbegin(void) const;
-	inline const std::vector<SyntaxNode>::const_iterator cend(void) const;
-
-	inline const std::vector<SyntaxNode>::const_reverse_iterator
-		crbegin(void) const;
-
-	inline const std::vector<SyntaxNode>::const_reverse_iterator
-		crend(void) const;
+	std::vector<SyntaxNode>::iterator begin(void);
+	std::vector<SyntaxNode>::iterator end(void);
+	std::vector<SyntaxNode>::reverse_iterator rbegin(void);
+	std::vector<SyntaxNode>::reverse_iterator rend(void);
+	const std::vector<SyntaxNode>::const_iterator cbegin(void) const;
+	const std::vector<SyntaxNode>::const_iterator cend(void) const;
+	const std::vector<SyntaxNode>::const_reverse_iterator crbegin(void) const;
+	const std::vector<SyntaxNode>::const_reverse_iterator crend(void) const;
 
 private:
 	std::vector<SyntaxNode> children;
