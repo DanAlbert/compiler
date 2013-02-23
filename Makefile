@@ -50,7 +50,8 @@ $(NAME): $(OBJ)
 	@$(CXX) -o $@ $(ALL_CFLAGS) $^ $(LDFLAGS)
 
 stutest.out: $(NAME)
-	-./$(NAME) $(RUNFLAGS) $(TESTDIR)/sample.scm > stutest.out
+	@make -C $(TESTDIR) > /dev/null
+	@-make test | grep -v make > stutest.out
 
 proftest.out: $(NAME)
 	cat $(PROFTEST)
@@ -90,5 +91,5 @@ $(shell mkdir $(OBJDIR) 2>/dev/null)
 -include $(shell mkdir $(DEPDIR) 2>/dev/null) $(wildcard $(DEPDIR)/*)
 
 # Listing of phony targets.
-.PHONY : clean doc
+.PHONY : clean doc stutest.out
 
