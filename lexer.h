@@ -84,7 +84,9 @@ private:
 	char current;
 
     /**
-     * Tokens pushed back by the parser; will be returned by subsequent call to Next()
+     * Tokens pushed back by the parser; .
+	 *
+	 * These will be returned by subsequent call to Next().
      */
     std::vector<Token> pushback_tokens;
 
