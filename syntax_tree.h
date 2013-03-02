@@ -7,6 +7,7 @@
 #define SYNTAX_TREE_H
 
 #include <vector>
+#include <string.h>
 
 #include "token.h"
 
@@ -19,6 +20,16 @@ public:
 	inline const Token& GetToken(void) const
 	{
 		return this->token;
+	}
+
+	inline Token::Type GetType(void) const
+	{
+		return this->token.GetType();
+	}
+
+	inline const std::string GetValue(void) const
+	{
+		return this->token.GetLexeme();
 	}
 
 	inline const SyntaxNode* GetParent(void) const
@@ -37,6 +48,11 @@ public:
 	void SetChildren(const std::vector<SyntaxNode>& children);
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);
+
+	inline size_t size(void) noexcept
+	{
+		return this->children.size();
+	}
 
 	std::vector<SyntaxNode>::iterator begin(void);
 	std::vector<SyntaxNode>::iterator end(void);

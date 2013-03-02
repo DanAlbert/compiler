@@ -49,9 +49,9 @@ void Parser::PrintTree(FILE* file)
 
 void Parser::expect(Token t, const char *expect_string)
 {
-	if (t.GetToken() != expect_string) {
+	if (t.GetLexeme() != expect_string) {
 		ERROR("Expecting string '%s' but encountered '%s'",
-		      expect_string, t.GetToken().c_str());
+		      expect_string, t.GetLexeme().c_str());
 		exit(EXIT_FAILURE);
 	}
 }
@@ -93,20 +93,20 @@ void Parser::S(SyntaxNode* parent)
 	Token firstToken = lex.Next();
 	DEBUG("#1 In S, Token: %s", firstToken.ToString().c_str());
 	// ****************** ==> () || (S) || ()S || (S)S 
-	if (firstToken.GetToken() == "(") {
+	if (firstToken.GetLexeme() == "(") {
 		SyntaxNode* S = parent->AddChild(firstToken);  //adds the "(" to the list of children
 
 		Token t = lex.Next();
 		DEBUG("#2 In S, Token: %s", t.ToString().c_str()); 
 		// ****************** ==> () || ()S
-		if (t.GetToken() == ")") {      
+		if (t.GetLexeme() == ")") {      
 			parent->AddChild(t);  //add the ")" to the list of children
 
             // We now distinguish between () and ()S
 			Token t2 = lex.Next();
             lex.PushBack(t2);
 			DEBUG("#3 In S --> () | ()S, Token: %s", t2.ToString().c_str()); 
-			if (t2.GetToken() == ")") {  // this is the () case
+			if (t2.GetLexeme() == ")") {  // this is the () case
 			    DEBUG("#4 In S --> (), Token: %s", t2.ToString().c_str()); 
 			}
             else {                       // this is the ()S case
@@ -127,7 +127,7 @@ void Parser::S(SyntaxNode* parent)
 			Token t4 = lex.Next();       // let's see if an S is following
             lex.PushBack(t4);
 			DEBUG("#7 In S, lookahead Token: %s", t4.ToString().c_str());
-			if (t4.GetToken() != ")") {  // we *do* have a following S production
+			if (t4.GetLexeme() != ")") {  // we *do* have a following S production
 			    DEBUG("#8 In S"); 
 				this->S(parent);
 			}
@@ -145,7 +145,7 @@ void Parser::S(SyntaxNode* parent)
 		DEBUG("#9 In S, Token: %s", lookAhead.ToString().c_str()); 
         lex.PushBack(lookAhead);
 
-		if (lookAhead.GetToken() != ")") {   // then either a "(" or an atom
+		if (lookAhead.GetLexeme() != ")") {   // then either a "(" or an atom
 		    DEBUG("#10 In S"); 
 			this->S(parent);
 		}
@@ -154,7 +154,7 @@ void Parser::S(SyntaxNode* parent)
     // *****************************  Doesn't match any production
 	else {
 		fprintf(stderr, "Expected '(' or a symbol, but found '%s'\n",
-            firstToken.GetToken().c_str());
+            firstToken.GetLexeme().c_str());
 		exit(-1);
 	}
 }

@@ -9,6 +9,12 @@ class Parser
 public:
 	Parser(const char* file);
 	~Parser(void);
+
+	inline const SyntaxNode* GetTree(void) const
+	{
+		return this->root;
+	}
+
 	void ParseTree(void);
 	void PrintTree(FILE* file = stdout);
 

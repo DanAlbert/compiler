@@ -13,6 +13,7 @@
 
 #include "lexer.h"
 #include "parser.h"
+#include "gforth_code_generator.h"
 #include "messages.h"
 #include "syntax_tree.h"
  
@@ -183,7 +184,11 @@ void translate(const char* file)
 {
 	assert(file);
 	INFO("translating %s", file);
-	WARNING("translate() is not yet implemented");
+	Parser parser(file);
+	parser.ParseTree();
+
+	GForthCodeGenerator generator(parser.GetTree());
+	generator.Synthesize();
 }
 
 void printScan(const char* file)

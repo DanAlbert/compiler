@@ -7,16 +7,16 @@
 
 #include "messages.h"
 
-Token::Token(Type type, std::string token)
+Token::Token(Type type, std::string lexeme)
 {
 	this->type = type;
-	this->token = token;
+	this->lexeme = lexeme;
 }
 
 Token::Token(const Token& token)
 {
 	this->type = token.type;
-	this->token = token.token;
+	this->lexeme = token.lexeme;
 }
 
 Token& Token::operator=(const Token& rhs)
@@ -25,7 +25,7 @@ Token& Token::operator=(const Token& rhs)
 		return *this;
 
 	this->type = rhs.type;
-	this->token = rhs.token;
+	this->lexeme = rhs.lexeme;
 
 	return *this;
 }
@@ -33,7 +33,7 @@ Token& Token::operator=(const Token& rhs)
 bool Token::operator==(const Token& other) const
 {
 	return (this->GetType() == other.GetType()) &&
-	       (this->GetToken() == other.GetToken());
+	       (this->GetLexeme() == other.GetLexeme());
 }
 
 bool Token::operator!=(const Token& other) const
@@ -44,8 +44,8 @@ bool Token::operator!=(const Token& other) const
 const std::string Token::ToString(void) const
 {
 	std::ostringstream builder;
-	std::string token = TokenTypeToString(this->type);
-	builder << '<' << token << ", " << this->token << '>';
+	std::string type = TokenTypeToString(this->type);
+	builder << '<' << type << ", " << this->lexeme << '>';
 	return builder.str();
 }
 

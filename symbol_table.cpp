@@ -19,8 +19,8 @@ inline const SymbolTable* SymbolTable::GetParent(void) const
 
 void SymbolTable::Add(const Token& token)
 {
-    assert(!this->Contains(token.GetToken()));
-    this->symbols.insert( {{token.GetToken(), token }});;
+    assert(!this->Contains(token.GetLexeme()));
+    this->symbols.insert( {{token.GetLexeme(), token }});;
 }
 
 bool SymbolTable::Contains(const std::string& id) const

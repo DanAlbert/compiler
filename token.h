@@ -42,9 +42,9 @@ public:
 	 * Instantiates a token. Once instantiated, a token may not be modified.
 	 *
 	 * @param type The type of token being instantiated.
-	 * @param token A string containing the token value.
+	 * @param lexeme A string containing the lexeme.
 	 */
-	Token(Type type, std::string token);
+	Token(Type type, std::string lexeme);
 
 	Token(const Token& token);
 	
@@ -53,9 +53,9 @@ public:
 		return this->type;
 	}
 
-	inline const std::string GetToken(void) const
+	inline const std::string GetLexeme(void) const
 	{
-		return this->token;
+		return this->lexeme;
 	}
 
 	Token& operator=(const Token& rhs);
@@ -85,9 +85,9 @@ private:
 	Type type;
 
 	/**
-	 * This token's value.
+	 * This token's lexeme.
 	 */
-	std::string token;
+	std::string lexeme;
 };
 
 std::string TokenTypeToString(Token::Type type);

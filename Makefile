@@ -16,6 +16,8 @@ SRC =	main.cpp \
 		symbol_table.cpp \
 		syntax_tree.cpp \
 		parser.cpp \
+		code_generator.cpp \
+		gforth_code_generator.cpp \
 
 DEBUG = -g
 OPTIMIZATION = -O3  
