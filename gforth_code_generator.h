@@ -6,10 +6,10 @@
 #include "code_generator.h"
 #include "syntax_tree.h"
 
-class GForthCodeGenerator : public CodeGenerator
+class GforthCodeGenerator : public CodeGenerator
 {
 public:
-	GForthCodeGenerator(const SyntaxNode* tree, FILE* out = stdout);
+	GforthCodeGenerator(const SyntaxNode* tree, FILE* out = stdout);
 
 	void Synthesize(void);
 
@@ -21,6 +21,9 @@ private:
 	void synthesizeNumber(const SyntaxNode* node);
 
 	void handleSyntax(const SyntaxNode* node);
+
+	std::string equivOf(const Token& token) const;
+	std::string equivSymbol(const std::string& symbol) const;
 };
 
 #endif // GFORTH_CODE_GENERATOR_H

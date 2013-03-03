@@ -5,7 +5,7 @@
  * 
  * @author Dan Albert <dan@gingerhq.net>
  *
- * This compiler translates from IBTL (Itty Bitty Teaching Language) to GForth.
+ * This compiler translates from IBTL (Itty Bitty Teaching Language) to Gforth.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -187,7 +187,7 @@ void translate(const char* file)
 	Parser parser(file);
 	parser.ParseTree();
 
-	GForthCodeGenerator generator(parser.GetTree());
+	GforthCodeGenerator generator(parser.GetTree());
 	generator.Synthesize();
 }
 

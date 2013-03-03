@@ -20,8 +20,8 @@ TEST(SyntaxNode, Constructor)
 		std::string str = RandomString(MAX_STRING_LENGTH);
 		SyntaxNode node(Token(type, str));
 
-		EXPECT_EQ(type, node.GetToken().GetType());
-		EXPECT_EQ(str, node.GetToken().GetToken());
+		EXPECT_EQ(type, node.GetType());
+		EXPECT_EQ(str, node.GetValue());
 	}
 }
 

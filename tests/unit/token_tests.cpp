@@ -20,7 +20,7 @@ TEST(Token, Constructor)
 		Token token(type, str);
 
 		EXPECT_EQ(type, token.GetType());
-		EXPECT_EQ(str, token.GetToken());
+		EXPECT_EQ(str, token.GetLexeme());
 	}
 }
 
@@ -108,7 +108,7 @@ TEST(Token, ToString)
 		
 		std::ostringstream builder;
 		builder << '<' << TokenTypeToString(token.GetType()) << ", "
-			    << token.GetToken() << '>';
+			    << token.GetLexeme() << '>';
 		std::string expected = builder.str();
 
 		EXPECT_EQ(expected, token.ToString());

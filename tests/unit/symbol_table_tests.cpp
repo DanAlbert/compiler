@@ -29,7 +29,7 @@ TEST(SymbolTable, Add)
 		
 		for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-			EXPECT_EQ(*it, table[it->GetToken()]);
+			EXPECT_EQ(*it, table[it->GetLexeme()]);
 		}
 	}
 }
@@ -55,7 +55,7 @@ TEST(SymbolTable, Get)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_EQ(*it, table.Get(it->GetToken()));
+            EXPECT_EQ(*it, table.Get(it->GetLexeme()));
         }
     }
 }TEST(SymbolTable, GetFromParent)
@@ -80,7 +80,7 @@ TEST(SymbolTable, Get)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_EQ(*it, table.Get(it->GetToken()));
+            EXPECT_EQ(*it, table.Get(it->GetLexeme()));
         }
     }
 }
@@ -107,7 +107,7 @@ TEST(SymbolTable, Contains)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_TRUE(table.Contains(it->GetToken()));
+            EXPECT_TRUE(table.Contains(it->GetLexeme()));
         }
     }
 
@@ -135,7 +135,7 @@ TEST(SymbolTable, ContainsWithParent)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_TRUE(table.Contains(it->GetToken()));
+            EXPECT_TRUE(table.Contains(it->GetLexeme()));
         }
     }
 }
