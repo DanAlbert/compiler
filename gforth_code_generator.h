@@ -15,12 +15,9 @@ public:
 
 private:
 	void synthesizeNode(const SyntaxNode* node);
-	void synthesizeList(const SyntaxNode* node);
 	void synthesizeSymbol(const SyntaxNode* node);
 	void synthesizeString(const SyntaxNode* node);
 	void synthesizeNumber(const SyntaxNode* node);
-
-	void handleSyntax(const SyntaxNode* node);
 
 	std::string equivOf(const Token& token) const;
 	std::string equivSymbol(const std::string& symbol) const;

@@ -13,6 +13,7 @@
 
 #include "lexer.h"
 #include "parser.h"
+#include "semantic_analyzer.h"
 #include "gforth_code_generator.h"
 #include "messages.h"
 #include "syntax_tree.h"
@@ -78,6 +79,13 @@ void printScan(const char* file);
 void printParse(const char* file);
 
 /**
+ * Parses a file and prints the semantically analyzed syntax tree.
+ *
+ * @param file The file to be parsed.
+ */
+void printSemantic(const char* file);
+
+/**
  * Prints usage information.
  */
 void usage(void);
@@ -86,6 +94,7 @@ enum class Mode
 {
 	Scan,
 	Parse,
+	Semantic,
 	Translate
 };
 
@@ -100,14 +109,15 @@ int main(int argc, char **argv)
 		{
 			{"help",     no_argument, 0, 'h'},
 			{"tokenize", no_argument, 0, 't'},
-			{"syntax",   no_argument, 0, 's'},
+			{"parse",    no_argument, 0, 'p'},
+			{"semantic", no_argument, 0, 's'},
 			{"verbose",  no_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
 
 		int option_index = 0;
  
-		c = getopt_long(argc, argv, "htsv",
+		c = getopt_long(argc, argv, "htpsv",
 		                long_options, &option_index);
  
 		/* Detect the end of the options. */
@@ -132,8 +142,11 @@ int main(int argc, char **argv)
 		case 't':
 			mode = Mode::Scan;
 			break;
-		case 's':
+		case 'p':
 			mode = Mode::Parse;
+			break;
+		case 's':
+			mode = Mode::Semantic;
 			break;
 		case 'v':
 			set_log_level(CLAMP(get_log_level() + 1,
@@ -162,6 +175,9 @@ int main(int argc, char **argv)
 			case Mode::Parse:
 				printParse(file);
 				break;
+			case Mode::Semantic:
+				printSemantic(file);
+				break;
 			case Mode::Translate:
 				translate(file);
 				break;
@@ -186,8 +202,10 @@ void translate(const char* file)
 	INFO("translating %s", file);
 	Parser parser(file);
 	parser.ParseTree();
+	SemanticAnalyzer sem(parser.GetTree());
+	sem.Construct();
 
-	GforthCodeGenerator generator(parser.GetTree());
+	GforthCodeGenerator generator(sem.GetTree());
 	generator.Synthesize();
 }
 
@@ -217,6 +235,17 @@ void printParse(const char* file)
 	Parser parser(file);
 	parser.ParseTree();
 	parser.PrintTree();
+}
+
+void printSemantic(const char* file)
+{
+	assert(file);
+	INFO("parsing %s", file);
+	Parser parser(file);
+	parser.ParseTree();
+	SemanticAnalyzer sem(parser.GetTree());
+	sem.Construct();
+	sem.PrintTree();
 }
 
 void usage(void)

@@ -1,0 +1,96 @@
+#include "semantic_analyzer.h"
+
+#include <assert.h>
+
+#include "messages.h"
+
+SemanticAnalyzer::SemanticAnalyzer(const SyntaxNode* tree) :
+	tree(NULL),
+	sourceTree(tree)
+{
+}
+
+SemanticAnalyzer::~SemanticAnalyzer(void)
+{
+	if (this->tree)
+	{
+		delete this->tree;
+		this->tree = NULL;
+	}
+}
+
+void SemanticAnalyzer::PrintTree(FILE* file)
+{
+	assert(this->tree);
+    this->tree->Print(file);
+}
+
+void SemanticAnalyzer::Construct(void)
+{
+	this->reorganize();
+	this->checkTypes();
+}
+
+void SemanticAnalyzer::reorganize(void)
+{
+	assert(this->sourceTree);
+	assert(!this->tree);
+
+	INFO("reorganizing syntax tree");
+
+	if ((this->sourceTree->GetType() != Token::Type::Symbol) &&
+	    (this->sourceTree->GetValue() != "statements"))
+	{
+		CRITICAL("invalid syntax tree root");
+		exit(EXIT_FAILURE);
+	}
+
+	this->tree = new SyntaxNode(Token(Token::Type::Symbol, "statements"));
+	for (auto it = sourceTree->cbegin(); it != sourceTree->cend(); ++it)
+	{
+		if (it->GetValue() == "(")
+		{
+			this->list(&*it, this->tree);
+		}
+		else if (it->GetValue() == ")")
+		{
+		}
+		else
+		{
+			CRITICAL("invalid syntax");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+void SemanticAnalyzer::checkTypes(void)
+{
+}
+
+void SemanticAnalyzer::list(const SyntaxNode* node, SyntaxNode* parent)
+{
+	assert(node);
+	assert(parent);
+	
+	DEBUG("handling list");
+
+	auto it = node->cbegin();
+	// TODO: this will fail if the first element of the list is a list itself
+	// example: ((if (foo) (+) (-)) 2 4)
+	SyntaxNode* op = parent->AddChild(it->GetToken());
+	DEBUG("built op");
+	for (++it; it != node->cend(); ++it)
+	{
+		if (it->GetValue() == "(")
+		{
+			this->list(&*it, op);
+		}
+		else if (it->GetValue() != ")")
+		{
+			DEBUG("adding child to list");
+			op->AddChild(*it);
+		}
+		// else ignore
+	}
+}
+

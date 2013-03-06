@@ -16,6 +16,7 @@ SRC =	main.cpp \
 		symbol_table.cpp \
 		syntax_tree.cpp \
 		parser.cpp \
+		semantic_analyzer.cpp \
 		code_generator.cpp \
 		gforth_code_generator.cpp \
 

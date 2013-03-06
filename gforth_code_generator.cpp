@@ -28,7 +28,8 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 
 	if (node->GetType() == Token::Type::Syntax)
 	{
-		this->handleSyntax(node);
+		CRITICAL("invalid syntax");
+		exit(EXIT_FAILURE);
 	}
 	else if (node->GetType() == Token::Type::Symbol)
 	{
@@ -50,25 +51,17 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 	}
 }
 
-void GforthCodeGenerator::synthesizeList(const SyntaxNode* node)
-{
-	assert(node);
-	assert(node->GetType() == Token::Type::Syntax);
-	auto it = node->cbegin();
-	const SyntaxNode* first = &*it;
-	for (++it; it != node->cend(); ++it)
-	{
-		this->synthesizeNode(&*it);
-	}
-
-	this->synthesizeNode(first);
-}
-
 void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 {
 	assert(node);
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Symbol);
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		this->synthesizeNode(&*it);
+	}
+
 	fprintf(this->out, "%s ", this->equivOf(node->GetToken()).c_str());
 }
 
@@ -88,24 +81,6 @@ void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 	fprintf(this->out, "%s ", node->GetValue().c_str());
 }
 
-void GforthCodeGenerator::handleSyntax(const SyntaxNode* node)
-{
-	assert(node->GetType() == Token::Type::Syntax);
-	if (node->GetValue() == "(")
-	{
-		this->synthesizeList(node);
-	}
-	else if (node->GetValue() == ")")
-	{
-		return;
-	}
-	else
-	{
-		CRITICAL("invalid syntax %s", node->GetValue().c_str());
-		exit(EXIT_FAILURE);
-	}
-}
-
 std::string GforthCodeGenerator::equivOf(const Token& token) const
 {
 	switch (token.GetType())
@@ -120,13 +95,11 @@ std::string GforthCodeGenerator::equivOf(const Token& token) const
 std::string GforthCodeGenerator::equivSymbol(const std::string& symbol) const
 {
 	if (symbol == "display")
-	{
 		return ".";
-	}
 	else if (symbol == "newline")
-	{
 		return "cr";
-	}
+	else if (symbol == "%")
+		return "mod";
 
 	return symbol;
 }
