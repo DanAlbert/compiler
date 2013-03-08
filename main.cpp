@@ -278,6 +278,7 @@ void usage(void)
     printf("OPTIONS:\n");
     printf("    -h, --help      - display the message\n");
 	printf("    -t, --tokenize  - print the scanned tokens and exit\n");
+	printf("    -p, --parse  	- print the parse tree and exit\n");
 	printf("    -s, --syntax    - print the parsed syntax tree and exit\n");
 	printf("    -S, --symbol    - print the symbol table and  exit\n");
     printf("    -v, --verbose   - increase output verbosity\n");
