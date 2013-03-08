@@ -37,6 +37,8 @@ public:
 		return this->parent;
 	}
 
+	bool IsFloat(void) const;
+
 	SyntaxNode& operator=(const SyntaxNode& rhs);
 	bool operator==(const SyntaxNode& rhs) const;
 	bool operator!=(const SyntaxNode& rhs) const;
@@ -46,7 +48,10 @@ public:
 	SyntaxNode* AddChild(const Token& token);
 	SyntaxNode* AddChild(const SyntaxNode& node);
 	void SetChildren(const std::vector<SyntaxNode>& children);
+	void InsertBetween(std::vector<SyntaxNode>::iterator,
+	                   const SyntaxNode& node);
 	void RemoveChild(const Token& token);
+	void RemoveChild(std::vector<SyntaxNode>::iterator position);
 	void RemoveChildren(void);
 
 	inline size_t size(void) noexcept

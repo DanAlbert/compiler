@@ -24,8 +24,11 @@ private:
 
 	void reorganize(void);
 	void checkTypes(void);
+	void checkNodeTypes(SyntaxNode* node);
 
 	void list(const SyntaxNode* node, SyntaxNode* parent); 
+	void makeIntToFloat(std::vector<SyntaxNode>::iterator it,
+	                    SyntaxNode* parent);
 };
 
 #endif // SEMANTIC_ANALYZER_H
