@@ -86,6 +86,13 @@ void printParse(const char* file);
 void printSemantic(const char* file);
 
 /**
+ * Parses a file and prints the symbolt table associated with the file.
+ *
+ * @param file The file to be parsed.
+ */
+void printSymbols(const char* file);
+
+/**
  * Prints usage information.
  */
 void usage(void);
@@ -95,6 +102,7 @@ enum class Mode
 	Scan,
 	Parse,
 	Semantic,
+	Symbol,
 	Translate
 };
 
@@ -111,13 +119,14 @@ int main(int argc, char **argv)
 			{"tokenize", no_argument, 0, 't'},
 			{"parse",    no_argument, 0, 'p'},
 			{"semantic", no_argument, 0, 's'},
+			{"symbol",   no_argument, 0, 'S'},
 			{"verbose",  no_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
 
 		int option_index = 0;
  
-		c = getopt_long(argc, argv, "htpsv",
+		c = getopt_long(argc, argv, "htpsSv",
 		                long_options, &option_index);
  
 		/* Detect the end of the options. */
@@ -148,6 +157,8 @@ int main(int argc, char **argv)
 		case 's':
 			mode = Mode::Semantic;
 			break;
+		case 'S': //can't think of a better letter b/c s and t are taken
+			mode = Mode::Symbol;
 		case 'v':
 			set_log_level(CLAMP(get_log_level() + 1,
 			                    LOGLEVEL_MIN, LOGLEVEL_MAX));
@@ -177,6 +188,9 @@ int main(int argc, char **argv)
 				break;
 			case Mode::Semantic:
 				printSemantic(file);
+				break;
+			case Mode::Symbol:
+				printSymbols(file);
 				break;
 			case Mode::Translate:
 				translate(file);
@@ -236,7 +250,6 @@ void printParse(const char* file)
 	parser.ParseTree();
 	parser.PrintTree();
 }
-
 void printSemantic(const char* file)
 {
 	assert(file);
@@ -248,6 +261,17 @@ void printSemantic(const char* file)
 	sem.PrintTree();
 }
 
+void printSymbols(const char* file)
+{
+	assert(file);
+	INFO("parsing %s", file);
+	Parser parser(file);
+	parser.ParseTree();
+	INFO("printing symbol table");
+	parser.symtab.PrintSymbols();
+}
+
+
 void usage(void)
 {
     printf("usage: compiler OPTIONS FILES\n");
@@ -255,6 +279,7 @@ void usage(void)
     printf("    -h, --help      - display the message\n");
 	printf("    -t, --tokenize  - print the scanned tokens and exit\n");
 	printf("    -s, --syntax    - print the parsed syntax tree and exit\n");
+	printf("    -S, --symbol    - print the symbol table and  exit\n");
     printf("    -v, --verbose   - increase output verbosity\n");
 }
 

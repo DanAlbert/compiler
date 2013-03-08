@@ -3,6 +3,7 @@
 
 #include "lexer.h"
 #include "syntax_tree.h"
+#include "symbol_table.h"
 
 class Parser
 {
@@ -18,10 +19,12 @@ public:
 	void ParseTree(void);
 	void PrintTree(FILE* file = stdout);
 
+	SymbolTable symtab;		
+
 private:
 	SyntaxNode* root;
 	Lexer lex;
-
+	
 	void expect(Token, const char*);
 	void F(SyntaxNode* parent);
 	void T(SyntaxNode* parent);

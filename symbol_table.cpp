@@ -1,5 +1,5 @@
 #include "symbol_table.h"
-
+#include "token.h"
 #include <assert.h>
 #include "messages.h"
 
@@ -10,6 +10,15 @@ SymbolTable::SymbolTable(SymbolTable* parent) :
 const Token& SymbolTable::operator[](const std::string& id) const
 {
     return this->Get(id);
+}
+
+void SymbolTable::PrintSymbols(FILE* file) const
+{
+	assert(file);
+	for ( auto it = this->symbols.begin(); it != this->symbols.end(); ++it ){
+		it->second.Print(file);
+		fprintf(file, "\n");
+	}
 }
 
 inline const SymbolTable* SymbolTable::GetParent(void) const

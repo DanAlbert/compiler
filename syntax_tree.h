@@ -31,7 +31,6 @@ public:
 	{
 		return this->token.GetLexeme();
 	}
-
 	inline const SyntaxNode* GetParent(void) const
 	{
 		return this->parent;
@@ -49,7 +48,7 @@ public:
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);
 
-	inline size_t size(void) noexcept
+	inline size_t size(void) //noexcept
 	{
 		return this->children.size();
 	}

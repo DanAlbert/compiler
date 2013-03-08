@@ -10,7 +10,7 @@
 #include <math.h>
 
 
-/** End Productions ***
+/*** End Productions ***
  *   F-> <endoffile> || TF
  *   T-> (S)
  *	 S-> () || atom || (S) || ()S || atom S || (S)S
@@ -77,6 +77,11 @@ void Parser::T(SyntaxNode* parent)
 	DEBUG("In T, Token: %s", t.ToString().c_str());
 	expect(t, "(");
 	SyntaxNode* T = parent->AddChild(t);
+	
+	//Add to symbol table
+	if(!symtab.Contains(t.GetLexeme())){
+		symtab.Add(t);	
+	}
 
 	this->S(T);
 
@@ -84,6 +89,11 @@ void Parser::T(SyntaxNode* parent)
 	DEBUG("In T, Token: %s", t.ToString().c_str());
 	expect(t, ")");
 	parent->AddChild(t);
+
+	//Add to symbol table
+	if(!symtab.Contains(t.GetLexeme())){
+		symtab.Add(t);	
+	}
 }
 
 void Parser::S(SyntaxNode* parent)
@@ -95,12 +105,21 @@ void Parser::S(SyntaxNode* parent)
 	// ****************** ==> () || (S) || ()S || (S)S 
 	if (firstToken.GetLexeme() == "(") {
 		SyntaxNode* S = parent->AddChild(firstToken);  //adds the "(" to the list of children
+		//Add to symbol table
+		if(!symtab.Contains(firstToken.GetLexeme())){
+			symtab.Add(firstToken);	
+		}
 
 		Token t = lex.Next();
 		DEBUG("#2 In S, Token: %s", t.ToString().c_str()); 
 		// ****************** ==> () || ()S
 		if (t.GetLexeme() == ")") {      
 			parent->AddChild(t);  //add the ")" to the list of children
+			
+			//Add to symbol table
+			if(!symtab.Contains(t.GetLexeme())){
+				symtab.Add(t);	
+			}
 
             // We now distinguish between () and ()S
 			Token t2 = lex.Next();
@@ -124,6 +143,11 @@ void Parser::S(SyntaxNode* parent)
             expect(t3, ")");
 			parent->AddChild(t3);  //add the ")" token
 
+			//Add to symbol table
+			if(!symtab.Contains(t3.GetLexeme())){
+				symtab.Add(t3);	
+			}
+
 			Token t4 = lex.Next();       // let's see if an S is following
             lex.PushBack(t4);
 			DEBUG("#7 In S, lookahead Token: %s", t4.ToString().c_str());
@@ -140,6 +164,12 @@ void Parser::S(SyntaxNode* parent)
 			|| firstToken.GetType() == Token::Type::String) { 
 
 		parent->AddChild(firstToken);
+		
+		//1 liner version maybe: symtab[firstToken.GetLexeme()] = firstToken();
+		//Add to symbol table
+		if(!symtab.Contains(firstToken.GetLexeme())){
+			symtab.Add(firstToken);	
+		}
 
 		Token lookAhead = lex.Next();   //checking if we're followed by an S
 		DEBUG("#9 In S, Token: %s", lookAhead.ToString().c_str()); 
