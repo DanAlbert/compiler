@@ -110,7 +110,18 @@ const Token Lexer::parseNumber(void)
 		token += this->current;
 		this->match();
 	}
-
+    if (this->current == '.')
+    {
+        token += this->current;
+        this->getNext();
+		while (isdigit(this->current))
+        {
+            token += this->current;
+            this->match();
+        }
+        this->finishToken();
+        return Token(Token::Type::Float, token);
+    }
 	this->finishToken();
 	return Token(Token::Type::Number, token);
 }
