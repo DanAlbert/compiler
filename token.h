@@ -36,8 +36,7 @@ public:
 		Float,
 		String,
 		Syntax,
-		Symbol,
-		Float
+		Symbol
 	};
 
 	/**
@@ -58,6 +57,11 @@ public:
 	inline const std::string GetLexeme(void) const
 	{
 		return this->lexeme;
+	}
+
+	inline void SetLexeme(const char* lexeme)
+	{
+		this->lexeme = std::string(lexeme);
 	}
 
 	Token& operator=(const Token& rhs);

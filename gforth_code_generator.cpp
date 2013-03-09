@@ -43,6 +43,10 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 	{
 		this->synthesizeNumber(node);
 	}
+	else if (node->GetType() == Token::Type::Float)
+	{
+		this->synthesizeFloat(node);
+	}
 	else
 	{
 		CRITICAL("unhandled syntax node type %s",
@@ -62,8 +66,7 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 		this->synthesizeNode(&*it);
 	}
 
-	fprintf(this->out, "%s ",
-	        this->equivOf(node->GetToken(), node->size()).c_str());
+	fprintf(this->out, "%s ", this->equivOf(node).c_str());
 }
 
 void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
@@ -82,24 +85,35 @@ void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 	fprintf(this->out, "%s ", node->GetValue().c_str());
 }
 
-std::string GforthCodeGenerator::equivOf(const Token& token, int nparams) const
+void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 {
-	switch (token.GetType())
+	assert(node);
+	assert(this->out);
+	assert(node->GetType() == Token::Type::Float);
+	fprintf(this->out, "%se ", node->GetValue().c_str());
+}
+
+std::string GforthCodeGenerator::equivOf(const SyntaxNode* node) const
+{
+	assert(node);
+
+	switch (node->GetType())
 	{
 	case Token::Type::Symbol:
-		return this->equivSymbol(token.GetLexeme(), nparams);
+		return this->equivSymbol(node);
 	default:
-		return token.GetLexeme();
+		return node->GetValue();
 	}
 }
 
-std::string GforthCodeGenerator::equivSymbol(
-		const std::string& symbol,
-	   	int nparams) const
+std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
 {
-	if (symbol == "display")
+	std::string symbol = node->GetValue();
+	int nparams = node->size();
+
+	if (symbol == "inttofloat")
 	{
-		return ".";
+		return "s>f";
 	}
 	else if (symbol == "newline")
 	{
@@ -117,24 +131,94 @@ std::string GforthCodeGenerator::equivSymbol(
 	{
 		return "=";
 	}
-	else if (symbol == "remainder")
+	if (node->IsFloat())
 	{
-		return "mod";
+		if (symbol == "display")
+		{
+			return "f.";
+		}
+		else if (symbol == "+")
+		{
+			return "f+";
+		}
+		else if (symbol == "-")
+		{
+			if (nparams == 1)
+			{
+				return "fnegate";
+			}
+			else if (nparams == 2)
+			{
+				return "f-";
+			}
+			else
+			{
+				ERROR("wrong number of arguments to %s", symbol.c_str());
+				exit(EXIT_FAILURE);
+			}
+		}
+		else if (symbol == "*")
+		{
+			return "f*";
+		}
+		else if (symbol == "/")
+		{
+			return "f/";
+		}
+		else if (symbol == "exp")
+		{
+			return "fexp";
+		}
+		else if (symbol == "expt")
+		{
+			return "f**";
+		}
+		else if (symbol == "<")
+		{
+			return "f<";
+		}
+		else if (symbol == "=")
+		{
+			return "f=";
+		}
+		else if (symbol == "sin")
+		{
+			return "fsin";
+		}
+		else if (symbol == "cos")
+		{
+			return "fcos";
+		}
+		else if (symbol == "tan")
+		{
+			return "ftan";
+		}
 	}
-	else if (symbol == "-")
+	else
 	{
-		if (nparams == 1)
+		if (symbol == "display")
 		{
-			return "negate";
+			return ".";
 		}
-		else if (nparams == 2)
+		else if (symbol == "remainder")
 		{
-			return "-";
+			return "mod";
 		}
-		else
+		else if (symbol == "-")
 		{
-			ERROR("wrong number of arguments to %s", symbol.c_str());
-			exit(EXIT_FAILURE);
+			if (nparams == 1)
+			{
+				return "negate";
+			}
+			else if (nparams == 2)
+			{
+				return "-";
+			}
+			else
+			{
+				ERROR("wrong number of arguments to %s", symbol.c_str());
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 

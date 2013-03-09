@@ -137,7 +137,8 @@ void Parser::S(SyntaxNode* parent)
 	// ******************************  ==> atom || atom S
 	else if (  firstToken.GetType() == Token::Type::Symbol 
 			|| firstToken.GetType() == Token::Type::Number
-			|| firstToken.GetType() == Token::Type::String) { 
+			|| firstToken.GetType() == Token::Type::String
+			|| firstToken.GetType() == Token::Type::Float) { 
 
 		parent->AddChild(firstToken);
 		
@@ -161,7 +162,7 @@ void Parser::S(SyntaxNode* parent)
 
     // *****************************  Doesn't match any production
 	else {
-		fprintf(stderr, "Expected '(' or a symbol, but found '%s'\n",
+		ERROR("Expected '(' or a symbol, but found '%s'",
             firstToken.GetLexeme().c_str());
 		exit(-1);
 	}

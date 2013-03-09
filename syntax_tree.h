@@ -31,6 +31,12 @@ public:
 	{
 		return this->token.GetLexeme();
 	}
+
+	inline void SetValue(const char* value)
+	{
+		this->token.SetLexeme(value);
+	}
+
 	inline const SyntaxNode* GetParent(void) const
 	{
 		return this->parent;

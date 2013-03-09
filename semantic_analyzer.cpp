@@ -77,20 +77,26 @@ void SemanticAnalyzer::checkTypes(void)
 
 void SemanticAnalyzer::checkNodeTypes(SyntaxNode* node)
 {
-	bool hasFloats = false;
+	assert(node);
+
+	bool needsFloats = node->IsFloat();
 	for (auto it = node->begin(); it != node->end(); ++it)
 	{
 		this->checkNodeTypes(&*it);
 		if (it->IsFloat())
-			hasFloats = true;
+			needsFloats = true;
 	}
 
-	if (hasFloats)
+	if (needsFloats)
 	{
 		for (auto it = node->begin(); it != node->end(); ++it)
 		{
 			switch (it->GetType())
 			{
+			case Token::Type::Symbol:
+				if (!it->IsFloat())
+					this->makeIntToFloat(it, node);
+				break;
 			case Token::Type::Number:
 				this->makeIntToFloat(it, node);
 				break;

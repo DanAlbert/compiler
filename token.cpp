@@ -62,6 +62,9 @@ std::string TokenTypeToString(Token::Type type)
 	case Token::Type::Number:
 		return std::string("number");
 		break;
+	case Token::Type::Float:
+		return std::string("float");
+		break;
 	case Token::Type::String:
 		return std::string("string");
 		break;
