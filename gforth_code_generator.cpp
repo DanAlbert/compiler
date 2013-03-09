@@ -133,9 +133,9 @@ std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
 	}
 	if (node->IsFloat())
 	{
-		if (symbol == "display")
+		if (symbol == "println")
 		{
-			return "f.";
+			return "f. CR";
 		}
 		else if (symbol == "+")
 		{
@@ -157,6 +157,10 @@ std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
 				exit(EXIT_FAILURE);
 			}
 		}
+		else if (symbol == "negate")
+		{
+			return "fnegate";
+		}
 		else if (symbol == "*")
 		{
 			return "f*";
@@ -170,6 +174,10 @@ std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
 			return "fexp";
 		}
 		else if (symbol == "expt")
+		{
+			return "f**";
+		}
+		else if (symbol == "^")
 		{
 			return "f**";
 		}
@@ -196,9 +204,9 @@ std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
 	}
 	else
 	{
-		if (symbol == "display")
+		if (symbol == "println")
 		{
-			return ".";
+			return ". CR";
 		}
 		else if (symbol == "remainder")
 		{

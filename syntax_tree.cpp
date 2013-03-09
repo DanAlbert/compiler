@@ -49,7 +49,8 @@ bool SyntaxNode::IsFloat(void) const
 	case Token::Type::Float:
 		return true;
 	case Token::Type::Symbol:
-		if ((this->GetValue() == "sin") ||
+		if ((this->GetValue() == "^") ||
+		    (this->GetValue() == "sin") ||
 			(this->GetValue() == "cos") ||
 			(this->GetValue() == "tan") ||
 			(this->GetValue() == "exp") ||
