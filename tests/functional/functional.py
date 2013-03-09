@@ -30,7 +30,7 @@ class Compiler(object):
         return self.run(source, '-t')
 
     def parse(self, source):
-        return self.run(source, '-s')
+        return self.run(source, '-p')
 
     def run(self, source, mode='', output=subprocess.PIPE):
         args = [self.path, source]
@@ -74,7 +74,7 @@ def run_parser_tests():
     errors = 0
     golden = file_text(local_file('golden_parse.out'))
     compiler = Compiler()
-    (out, err) = compiler.parse(local_file('input2.lisp'))
+    (out, err) = compiler.parse(local_file('float.ibtl'))
 
     if err:
         print 'ERROR: stderr not empty'
@@ -117,7 +117,9 @@ def run_translator_tests():
 
 def run_tests():
     errors = 0
+    print "Running lexer tests"
     errors += run_lexer_tests()
+    print "Running parser tests"
     errors += run_parser_tests()
 
     # These tests are diabled because I have yet to find a true equivalent for

@@ -1,12 +1,12 @@
 <syntax, (>
 <symbol, defparameter>
 <symbol, *small*>
-<number, 1>
+<float, 1.0>
 <syntax, )>
 <syntax, (>
 <symbol, defparameter>
 <symbol, *big*>
-<number, 100>
+<float, 100.>
 <syntax, )>
 <syntax, (>
 <symbol, defun>

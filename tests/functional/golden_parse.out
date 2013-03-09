@@ -1,42 +1,61 @@
 <symbol, statements>
 	<syntax, (>
+		<symbol, println>
 		<syntax, (>
-		<syntax, )>
-	<syntax, )>
-	<syntax, (>
-		<syntax, (>
-			<symbol, word>
-		<syntax, )>
-	<syntax, )>
-	<syntax, (>
-		<syntax, (>
-		<syntax, )>
-		<symbol, word>
-	<syntax, )>
-	<syntax, (>
-		<syntax, (>
-			<symbol, word1>
-		<syntax, )>
-		<symbol, word2>
-	<syntax, )>
-	<syntax, (>
-		<syntax, (>
+			<symbol, +>
 			<syntax, (>
+				<symbol, ->
+				<number, 2>
+				<syntax, (>
+					<symbol, *>
+					<number, 2>
+					<number, 4>
+				<syntax, )>
+			<syntax, )>
+			<syntax, (>
+				<symbol, />
+				<number, 3>
+				<syntax, (>
+					<symbol, ->
+					<float, 2.0>
+					<float, 6.>
+				<syntax, )>
 			<syntax, )>
 		<syntax, )>
 	<syntax, )>
 	<syntax, (>
+		<symbol, println>
 		<syntax, (>
-			<syntax, (>
-			<syntax, )>
-			<symbol, word>
+			<symbol, expt>
+			<number, 2>
+			<number, 4>
 		<syntax, )>
 	<syntax, )>
 	<syntax, (>
+		<symbol, println>
 		<syntax, (>
-			<syntax, (>
-				<symbol, S>
-			<syntax, )>
+			<symbol, exp>
+			<number, 1>
 		<syntax, )>
-		<symbol, S>
+	<syntax, )>
+	<syntax, (>
+		<symbol, println>
+		<syntax, (>
+			<symbol, sin>
+			<number, 0>
+		<syntax, )>
+	<syntax, )>
+	<syntax, (>
+		<symbol, println>
+		<syntax, (>
+			<symbol, cos>
+			<number, 0>
+		<syntax, )>
+	<syntax, )>
+	<syntax, (>
+		<symbol, println>
+		<syntax, (>
+			<symbol, tan>
+			<number, 0>
+		<syntax, )>
 	<syntax, )>

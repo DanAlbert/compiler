@@ -1,3 +1,4 @@
+default:
 clean:
 	-rm -f *.pyc
 

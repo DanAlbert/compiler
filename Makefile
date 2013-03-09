@@ -58,7 +58,7 @@ stutest.out: $(NAME)
 
 proftest.out: $(NAME)
 	cat $(PROFTEST)
-	$(NAME) -s $(PROFTEST) > proftest.out
+	$(NAME) $(PROFTEST) > proftest.out
 	cat proftest.out
 
 # Compile: create object files from C++ source files.
