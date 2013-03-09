@@ -65,6 +65,54 @@ void SemanticAnalyzer::reorganize(void)
 
 void SemanticAnalyzer::checkTypes(void)
 {
+	assert(this->tree);
+
+	INFO("checking types");
+
+	for (auto it = this->tree->begin(); it != this->tree->end(); ++it)
+	{
+		this->checkNodeTypes(&*it);
+	}
+}
+
+void SemanticAnalyzer::checkNodeTypes(SyntaxNode* node)
+{
+	bool hasFloats = false;
+	for (auto it = node->begin(); it != node->end(); ++it)
+	{
+		this->checkNodeTypes(&*it);
+		if (it->IsFloat())
+			hasFloats = true;
+	}
+
+	if (hasFloats)
+	{
+		for (auto it = node->begin(); it != node->end(); ++it)
+		{
+			switch (it->GetType())
+			{
+			case Token::Type::Number:
+				this->makeIntToFloat(it, node);
+				break;
+			case Token::Type::Float:
+				break;
+			default:
+				ERROR("no conversion exists for %s to %s",
+				      TokenTypeToString(it->GetType()).c_str(),
+					  TokenTypeToString(Token::Type::Float).c_str());
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+}
+
+void SemanticAnalyzer::makeIntToFloat(std::vector<SyntaxNode>::iterator it,
+                                      SyntaxNode* parent)
+{
+	assert(parent);
+
+	SyntaxNode node(Token(Token::Type::Symbol, "inttofloat"));
+	parent->InsertBetween(it, node);
 }
 
 void SemanticAnalyzer::list(const SyntaxNode* node, SyntaxNode* parent)

@@ -42,6 +42,25 @@ bool SyntaxNode::operator!=(const SyntaxNode& rhs) const
 	return !(*this == rhs);
 }
 
+bool SyntaxNode::IsFloat(void) const
+{
+	switch (this->GetType())
+	{
+	case Token::Type::Float:
+		return true;
+	case Token::Type::Symbol:
+		for (auto it = this->children.begin(); it != this->children.end(); ++it)
+		{
+			if (it->IsFloat())
+				return true;
+		}
+
+		return false;
+	default:
+		return false;
+	}
+}
+
 void SyntaxNode::Print(FILE* file, unsigned int level) const
 {
 	assert(file);
@@ -74,6 +93,15 @@ void SyntaxNode::SetChildren(const std::vector<SyntaxNode>& children)
 	this->children = children;
 }
 
+void SyntaxNode::InsertBetween(std::vector<SyntaxNode>::iterator position,
+                               const SyntaxNode& node)
+{
+	SyntaxNode tmp = *position;
+	position = this->children.erase(position);
+	position = this->children.insert(position, node);
+	position->AddChild(tmp);
+}
+
 void SyntaxNode::RemoveChild(const Token& token)
 {
 	// TODO: should probably assert that the token is a child of the node
@@ -85,6 +113,11 @@ void SyntaxNode::RemoveChild(const Token& token)
 			return;
 		}
 	}
+}
+
+void SyntaxNode::RemoveChild(std::vector<SyntaxNode>::iterator position)
+{
+	this->children.erase(position);
 }
 
 void SyntaxNode::RemoveChildren(void)

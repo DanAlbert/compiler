@@ -33,6 +33,7 @@ public:
 	enum class Type
 	{
 		Number,
+		Float,
 		String,
 		Syntax,
 		Symbol,
