@@ -59,7 +59,7 @@ public:
 	void RemoveChild(std::vector<SyntaxNode>::iterator position);
 	void RemoveChildren(void);
 
-	inline size_t size(void) const noexcept
+	inline size_t size(void) const
 	{
 		return this->children.size();
 	}
