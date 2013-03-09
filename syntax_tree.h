@@ -48,7 +48,7 @@ public:
 	void RemoveChild(const Token& token);
 	void RemoveChildren(void);
 
-	inline size_t size(void) //noexcept
+	inline size_t size(void) const noexcept
 	{
 		return this->children.size();
 	}

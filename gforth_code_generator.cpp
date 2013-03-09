@@ -62,7 +62,8 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 		this->synthesizeNode(&*it);
 	}
 
-	fprintf(this->out, "%s ", this->equivOf(node->GetToken()).c_str());
+	fprintf(this->out, "%s ",
+	        this->equivOf(node->GetToken(), node->size()).c_str());
 }
 
 void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
@@ -81,25 +82,61 @@ void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 	fprintf(this->out, "%s ", node->GetValue().c_str());
 }
 
-std::string GforthCodeGenerator::equivOf(const Token& token) const
+std::string GforthCodeGenerator::equivOf(const Token& token, int nparams) const
 {
 	switch (token.GetType())
 	{
 	case Token::Type::Symbol:
-		return this->equivSymbol(token.GetLexeme());
+		return this->equivSymbol(token.GetLexeme(), nparams);
 	default:
 		return token.GetLexeme();
 	}
 }
 
-std::string GforthCodeGenerator::equivSymbol(const std::string& symbol) const
+std::string GforthCodeGenerator::equivSymbol(
+		const std::string& symbol,
+	   	int nparams) const
 {
 	if (symbol == "display")
+	{
 		return ".";
+	}
 	else if (symbol == "newline")
+	{
 		return "cr";
+	}
 	else if (symbol == "%")
+	{
 		return "mod";
+	}
+	else if (symbol == "not")
+	{
+		return "invert";
+	}
+	else if (symbol == "iff")
+	{
+		return "=";
+	}
+	else if (symbol == "remainder")
+	{
+		return "mod";
+	}
+	else if (symbol == "-")
+	{
+		if (nparams == 1)
+		{
+			return "negate";
+		}
+		else if (nparams == 2)
+		{
+			return "-";
+		}
+		else
+		{
+			ERROR("wrong number of arguments to %s", symbol.c_str());
+			exit(EXIT_FAILURE);
+		}
+	}
 
 	return symbol;
 }

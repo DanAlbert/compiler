@@ -250,6 +250,7 @@ void printParse(const char* file)
 	parser.ParseTree();
 	parser.PrintTree();
 }
+
 void printSemantic(const char* file)
 {
 	assert(file);
