@@ -1,8 +1,73 @@
 #include "gforth_code_generator.h"
 
 #include <assert.h>
+#include <functional>
+#include <sstream>
+#include <unordered_map>
 
 #include "messages.h"
+
+#define T_FUNC(block) ([](const std::string& s, int n, bool f) \
+		{ (void)s; (void)n; (void)f; {block} })
+#define T_RETURN(val) T_FUNC(return val;)
+
+typedef std::function<std::string(const std::string&, int, bool)>
+		TranslationFunction;
+
+std::string mixedOp(const std::string& symbol, int nparams, bool isFloat);
+
+std::unordered_map<std::string, TranslationFunction> translations =
+{
+	{"+",          mixedOp},
+	{"-",          mixedOp},
+	{"*",          mixedOp},
+	{"/",          mixedOp},
+	{"<",          mixedOp},
+	{"=",          mixedOp},
+	{"println",    mixedOp},
+	{"%",          T_RETURN("mod")},
+	{"remainder",  T_RETURN("mod")},
+	{"^",          T_RETURN("f**")},
+	{"expt",       T_RETURN("f**")},
+	{"exp",        T_RETURN("fexp")},
+	{"sin",        T_RETURN("fsin")},
+	{"cos",        T_RETURN("fcos")},
+	{"tan",        T_RETURN("ftan")},
+	{"iff",        T_RETURN("=")},
+	{"not",        T_RETURN("invert")},
+	{"newline",    T_RETURN("cr")},
+	{"inttofloat", T_RETURN("s>f")},
+};
+
+std::string mixedOp(const std::string& symbol, int nparams, bool isFloat)
+{
+	std::ostringstream builder;
+	if (isFloat)
+		builder << 'f';
+
+	if ((symbol == "-") && (nparams == 1))
+	{
+		builder << "negate";
+	}
+	else if (symbol == "println")
+	{
+		if (nparams == 1)
+		{
+			builder << ". cr";
+		}
+		else
+		{
+			ERROR("%s does not take %d arguments", symbol.c_str(), nparams);
+			exit(EXIT_FAILURE);
+		}
+	}
+	else
+	{
+		builder << symbol;
+	}
+
+	return builder.str();
+}
 
 GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	CodeGenerator(tree, out)
@@ -28,7 +93,7 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 
 	if (node->GetType() == Token::Type::Syntax)
 	{
-		CRITICAL("invalid syntax");
+		CRITICAL("unexpected %s in syntax tree", node->GetValue().c_str());
 		exit(EXIT_FAILURE);
 	}
 	else if (node->GetType() == Token::Type::Symbol)
@@ -66,7 +131,20 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 		this->synthesizeNode(&*it);
 	}
 
-	fprintf(this->out, "%s ", this->equivOf(node).c_str());
+	std::string newSym;
+
+	auto t = translations.find(node->GetValue());
+	if (t != translations.end())
+	{
+		newSym = (t->second)(node->GetValue(), node->size(), node->IsFloat());
+	}
+	else
+	{
+		ERROR("no translation exists for %s", node->GetValue().c_str());
+		exit(EXIT_FAILURE);
+	}
+
+	fprintf(this->out, "%s ", newSym.c_str());
 }
 
 void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
@@ -91,145 +169,5 @@ void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Float);
 	fprintf(this->out, "%se ", node->GetValue().c_str());
-}
-
-std::string GforthCodeGenerator::equivOf(const SyntaxNode* node) const
-{
-	assert(node);
-
-	switch (node->GetType())
-	{
-	case Token::Type::Symbol:
-		return this->equivSymbol(node);
-	default:
-		return node->GetValue();
-	}
-}
-
-std::string GforthCodeGenerator::equivSymbol(const SyntaxNode* node) const
-{
-	std::string symbol = node->GetValue();
-	int nparams = node->size();
-
-	if (symbol == "inttofloat")
-	{
-		return "s>f";
-	}
-	else if (symbol == "newline")
-	{
-		return "cr";
-	}
-	else if (symbol == "%")
-	{
-		return "mod";
-	}
-	else if (symbol == "not")
-	{
-		return "invert";
-	}
-	else if (symbol == "iff")
-	{
-		return "=";
-	}
-	if (node->IsFloat())
-	{
-		if (symbol == "println")
-		{
-			return "f. CR";
-		}
-		else if (symbol == "+")
-		{
-			return "f+";
-		}
-		else if (symbol == "-")
-		{
-			if (nparams == 1)
-			{
-				return "fnegate";
-			}
-			else if (nparams == 2)
-			{
-				return "f-";
-			}
-			else
-			{
-				ERROR("wrong number of arguments to %s", symbol.c_str());
-				exit(EXIT_FAILURE);
-			}
-		}
-		else if (symbol == "negate")
-		{
-			return "fnegate";
-		}
-		else if (symbol == "*")
-		{
-			return "f*";
-		}
-		else if (symbol == "/")
-		{
-			return "f/";
-		}
-		else if (symbol == "exp")
-		{
-			return "fexp";
-		}
-		else if (symbol == "expt")
-		{
-			return "f**";
-		}
-		else if (symbol == "^")
-		{
-			return "f**";
-		}
-		else if (symbol == "<")
-		{
-			return "f<";
-		}
-		else if (symbol == "=")
-		{
-			return "f=";
-		}
-		else if (symbol == "sin")
-		{
-			return "fsin";
-		}
-		else if (symbol == "cos")
-		{
-			return "fcos";
-		}
-		else if (symbol == "tan")
-		{
-			return "ftan";
-		}
-	}
-	else
-	{
-		if (symbol == "println")
-		{
-			return ". CR";
-		}
-		else if (symbol == "remainder")
-		{
-			return "mod";
-		}
-		else if (symbol == "-")
-		{
-			if (nparams == 1)
-			{
-				return "negate";
-			}
-			else if (nparams == 2)
-			{
-				return "-";
-			}
-			else
-			{
-				ERROR("wrong number of arguments to %s", symbol.c_str());
-				exit(EXIT_FAILURE);
-			}
-		}
-	}
-
-	return symbol;
 }
 

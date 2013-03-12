@@ -19,9 +19,6 @@ private:
 	void synthesizeString(const SyntaxNode* node);
 	void synthesizeNumber(const SyntaxNode* node);
 	void synthesizeFloat(const SyntaxNode* node);
-
-	std::string equivOf(const SyntaxNode* node) const;
-	std::string equivSymbol(const SyntaxNode* node) const;
 };
 
 #endif // GFORTH_CODE_GENERATOR_H
