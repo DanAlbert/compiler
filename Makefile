@@ -13,7 +13,6 @@ SRC =	main.cpp \
 		messages.cpp \
 		lexer.cpp \
 		token.cpp \
-		symbol.cpp \
 		symbol_table.cpp \
 		syntax_tree.cpp \
 		parser.cpp \
