@@ -1,48 +1,63 @@
 #include "gforth_code_generator.h"
 
 #include <assert.h>
-#include <functional>
 #include <sstream>
-#include <unordered_map>
 
 #include "messages.h"
 
-#define T_FUNC(block) ([](const std::string& s, int n, bool f) \
-		{ (void)s; (void)n; (void)f; {block} })
-#define T_RETURN(val) T_FUNC(return val;)
-
-typedef std::function<std::string(const std::string&, int, bool)>
-		TranslationFunction;
-
-std::string mixedOp(const std::string& symbol, int nparams, bool isFloat);
-
-std::unordered_map<std::string, TranslationFunction> translations =
+std::unordered_map<std::string, std::string> symbolTranslations =
 {
-	{"+",          mixedOp},
-	{"-",          mixedOp},
-	{"*",          mixedOp},
-	{"/",          mixedOp},
-	{"<",          mixedOp},
-	{"=",          mixedOp},
-	{"println",    mixedOp},
-	{"%",          T_RETURN("mod")},
-	{"remainder",  T_RETURN("mod")},
-	{"^",          T_RETURN("f**")},
-	{"expt",       T_RETURN("f**")},
-	{"exp",        T_RETURN("fexp")},
-	{"sin",        T_RETURN("fsin")},
-	{"cos",        T_RETURN("fcos")},
-	{"tan",        T_RETURN("ftan")},
-	{"iff",        T_RETURN("=")},
-	{"not",        T_RETURN("invert")},
-	{"newline",    T_RETURN("cr")},
-	{"inttofloat", T_RETURN("s>f")},
+	{"%",          "mod"},
+	{"remainder",  "mod"},
+	{"^",          "f**"},
+	{"expt",       "f**"},
+	{"exp",        "fexp"},
+	{"sin",        "fsin"},
+	{"cos",        "fcos"},
+	{"tan",        "ftan"},
+	{"iff",        "="},
+	{"not",        "invert"},
+	{"newline",    "cr"},
+	{"inttofloat", "s>f"},
 };
 
-std::string mixedOp(const std::string& symbol, int nparams, bool isFloat)
+void GforthCodeGenerator::translatedOp(const SyntaxNode* node)
 {
+	assert(this->out);
+	assert(node);
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it) \
+	{
+		this->synthesizeNode(&*it);
+	}
+
+	auto t = symbolTranslations.find(node->GetValue());
+	if (t != symbolTranslations.end())
+	{
+		fprintf(this->out, "%s ", t->second.c_str());
+	}
+	else
+	{
+		ERROR("no translation exists for %s", node->GetValue().c_str());
+		exit(EXIT_FAILURE);
+	}
+}
+
+void GforthCodeGenerator::mixedOp(const SyntaxNode* node)
+{
+	assert(this->out);
+	assert(node);
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		this->synthesizeNode(&*it);
+	}
+
+	std::string symbol = node->GetValue();
+	int nparams = node->size();
+
 	std::ostringstream builder;
-	if (isFloat)
+	if (node->IsFloat())
 		builder << 'f';
 
 	if ((symbol == "-") && (nparams == 1))
@@ -66,12 +81,84 @@ std::string mixedOp(const std::string& symbol, int nparams, bool isFloat)
 		builder << symbol;
 	}
 
-	return builder.str();
+	fprintf(this->out, "%s ", builder.str().c_str());
+}
+
+void GforthCodeGenerator::ifOp(const SyntaxNode* node)
+{
+	assert(this->out);
+	assert(node);
+
+	int i = 0;
+	const SyntaxNode* condition = NULL;
+	const SyntaxNode* thenBody = NULL;
+	const SyntaxNode* elseBody = NULL;
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		switch (i++)
+		{
+		case 0:
+			condition = &*it;
+			break;
+		case 1:
+			thenBody = &*it;
+			break;
+		case 2:
+			elseBody = &*it;
+			break;
+		default:
+			ERROR("too many arguments to if");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (!condition || !thenBody)
+	{
+		ERROR("not enough arguments to if");
+		exit(EXIT_FAILURE);
+	}
+
+	this->synthesizeNode(condition);
+	fprintf(this->out, "if ");
+	this->synthesizeNode(thenBody);
+	if (elseBody)
+	{
+		fprintf(this->out, "else ");
+		this->synthesizeNode(elseBody);
+	}
+	fprintf(this->out, "endif ");
 }
 
 GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	CodeGenerator(tree, out)
 {
+	this->addTranslation("+",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("-",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("*",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("/",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("<",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("=",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation("println",    &GforthCodeGenerator::mixedOp);
+	this->addTranslation("%",          &GforthCodeGenerator::translatedOp);
+	this->addTranslation("remainder",  &GforthCodeGenerator::translatedOp);
+	this->addTranslation("^",          &GforthCodeGenerator::translatedOp);
+	this->addTranslation("expt",       &GforthCodeGenerator::translatedOp);
+	this->addTranslation("exp",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("sin",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("cos",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("tan",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("iff",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("not",        &GforthCodeGenerator::translatedOp);
+	this->addTranslation("newline",    &GforthCodeGenerator::translatedOp);
+	this->addTranslation("inttofloat", &GforthCodeGenerator::translatedOp);
+	this->addTranslation("if",         &GforthCodeGenerator::ifOp);
+}
+
+void GforthCodeGenerator::addTranslation(const std::string& symbol,
+		                                 GforthCodeGenerator::TranslationFunction func)
+{
+	this->translationFuncs[symbol] = func;
 }
 
 void GforthCodeGenerator::Synthesize(void)
@@ -79,10 +166,14 @@ void GforthCodeGenerator::Synthesize(void)
 	assert(this->out);
 	assert(this->tree);
 
+	// our entire output needs to be wrapped in a defined word because gforth
+	// doesn't allow conditional branches or loops outside of words
+	fprintf(this->out, ": __MAIN__ ");
 	for (auto it = this->tree->cbegin(); it != this->tree->cend(); ++it)
 	{
 		this->synthesizeNode(&*it);
 	}
+	fprintf(this->out, "; __MAIN__");
 
 	fputc('\n', this->out);
 }
@@ -126,25 +217,18 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Symbol);
 
-	for (auto it = node->cbegin(); it != node->cend(); ++it)
-	{
-		this->synthesizeNode(&*it);
-	}
-
 	std::string newSym;
 
-	auto t = translations.find(node->GetValue());
-	if (t != translations.end())
+	auto t = this->translationFuncs.find(node->GetValue());
+	if (t != this->translationFuncs.end())
 	{
-		newSym = (t->second)(node->GetValue(), node->size(), node->IsFloat());
+		(t->second)(*this, node);
 	}
 	else
 	{
 		ERROR("no translation exists for %s", node->GetValue().c_str());
 		exit(EXIT_FAILURE);
 	}
-
-	fprintf(this->out, "%s ", newSym.c_str());
 }
 
 void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
