@@ -36,7 +36,8 @@ public:
 		Float,
 		String,
 		Syntax,
-		Symbol
+		Symbol,
+		List
 	};
 
 	/**
@@ -45,7 +46,7 @@ public:
 	 * @param type The type of token being instantiated.
 	 * @param lexeme A string containing the lexeme.
 	 */
-	Token(Type type, std::string lexeme);
+	Token(Type type, std::string lexeme = "");
 
 	Token(const Token& token);
 	

@@ -7,16 +7,21 @@
 
 #include "messages.h"
 
-Token::Token(Type type, std::string lexeme)
+Token::Token(Type type, std::string lexeme) :
+	type(type),
+	lexeme(lexeme)
 {
-	this->type = type;
-	this->lexeme = lexeme;
+	// Only lists may have a blank lexeme
+	assert((lexeme != "") || (type == Token::Type::List));
+
+	// Lists must have a blank lexeme
+	assert((type != Token::Type::List) || (lexeme == ""));
 }
 
-Token::Token(const Token& token)
+Token::Token(const Token& token) :
+	type(token.type),
+	lexeme(token.lexeme)
 {
-	this->type = token.type;
-	this->lexeme = token.lexeme;
 }
 
 Token& Token::operator=(const Token& rhs)
@@ -45,7 +50,10 @@ const std::string Token::ToString(void) const
 {
 	std::ostringstream builder;
 	std::string type = TokenTypeToString(this->type);
-	builder << '<' << type << ", " << this->lexeme << '>';
+	builder << '<' << type;
+	if (this->type != Token::Type::List)
+   		builder << ", " << this->lexeme;
+	builder << '>';
 	return builder.str();
 }
 
@@ -60,20 +68,22 @@ std::string TokenTypeToString(Token::Type type)
 	switch (type)
 	{
 	case Token::Type::Number:
-		return std::string("number");
+		return "number";
 		break;
 	case Token::Type::Float:
-		return std::string("float");
+		return "float";
 		break;
 	case Token::Type::String:
-		return std::string("string");
+		return "string";
 		break;
 	case Token::Type::Syntax:
-		return std::string("syntax");
+		return "syntax";
 		break;
 	case Token::Type::Symbol:
-		return std::string("symbol");
+		return "symbol";
 		break;
+	case Token::Type::List:
+		return "list";
 	default:
 		ERROR("invalid token");
 		exit(EXIT_FAILURE);

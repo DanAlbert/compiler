@@ -130,6 +130,135 @@ void GforthCodeGenerator::ifOp(const SyntaxNode* node)
 	fprintf(this->out, "endif ");
 }
 
+Token::Type StringToType(const std::string& str);
+Token::Type StringToType(const std::string& str)
+{
+	if (str == "int")
+	{
+		return Token::Type::Number;
+	}
+	else if (str == "float")
+	{
+		return Token::Type::Float;
+	}
+	else
+	{
+		ERROR("unrecognized type");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void GforthCodeGenerator::letOp(const SyntaxNode* node)
+{
+	assert(this->out);
+	assert(node);
+
+	int i = 0;
+	const SyntaxNode* nameNode = NULL;
+	const SyntaxNode* typeNode = NULL;
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		switch (i++)
+		{
+		case 0:
+			nameNode = &*it;
+			break;
+		case 1:
+			typeNode = &*it;
+			break;
+		default:
+			ERROR("too many arguments to let");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (!nameNode || !typeNode)
+	{
+		ERROR("not enough arguments to let");
+		exit(EXIT_FAILURE);
+	}
+
+	std::string name = nameNode->GetValue();
+	Token::Type type = StringToType(typeNode->GetValue());
+
+	if ((type != Token::Type::Number) && (type != Token::Type::Float))
+	{
+		ERROR("unhandled variable type %s => %s",
+		      name.c_str(), TokenTypeToString(type).c_str());
+		exit(EXIT_FAILURE);
+	}
+
+	if (this->symbols.Contains(name))
+	{
+		ERROR("redefined symbol %s", name.c_str());
+		exit(EXIT_FAILURE);
+	}
+
+	this->symbols.Add(Token(type, name));
+
+	fprintf(this->out, "variable %s ", name.c_str());
+}
+
+void GforthCodeGenerator::assignOp(const SyntaxNode* node)
+{
+	assert(this->out);
+	assert(node);
+
+	int i = 0;
+	const SyntaxNode* nameNode = NULL;
+	const SyntaxNode* valueNode = NULL;
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		switch (i++)
+		{
+		case 0:
+			nameNode = &*it;
+			break;
+		case 1:
+			valueNode = &*it;
+			break;
+		default:
+			ERROR("too many arguments to assign");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (!nameNode || !valueNode)
+	{
+		ERROR("not enough arguments to assign");
+		exit(EXIT_FAILURE);
+	}
+
+	std::string name = nameNode->GetValue();
+	std::string value = valueNode->GetValue();
+
+	if (!this->symbols.Contains(name))
+	{
+		ERROR("undefined symbol %s", name.c_str());
+		exit(EXIT_FAILURE);
+	}
+
+	Token sym = this->symbols.Get(name);
+	fprintf(this->out, "%s %s ", value.c_str(), name.c_str());
+
+	if (sym.GetType() == Token::Type::Number)
+	{
+		fprintf(this->out, "! ");
+	}
+	else if (sym.GetType() == Token::Type::Float)
+	{
+		fprintf(this->out, "f! ");
+	}
+	else
+	{
+		ERROR("unhandled variable type %s => %s",
+		      name.c_str(), TokenTypeToString(sym.GetType()).c_str());
+		exit(EXIT_FAILURE);
+	}
+}
+
 GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	CodeGenerator(tree, out)
 {
@@ -153,12 +282,15 @@ GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	this->addTranslation("newline",    &GforthCodeGenerator::translatedOp);
 	this->addTranslation("inttofloat", &GforthCodeGenerator::translatedOp);
 	this->addTranslation("if",         &GforthCodeGenerator::ifOp);
+	this->addTranslation("let",        &GforthCodeGenerator::letOp);
+	this->addTranslation("assign",     &GforthCodeGenerator::assignOp);
 }
 
 void GforthCodeGenerator::addTranslation(const std::string& symbol,
-		                                 GforthCodeGenerator::TranslationFunction func)
+		                                 TranslationFunction func)
 {
 	this->translationFuncs[symbol] = func;
+	this->symbols.Add(Token(Token::Type::Symbol, symbol));
 }
 
 void GforthCodeGenerator::Synthesize(void)
@@ -203,6 +335,10 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 	{
 		this->synthesizeFloat(node);
 	}
+	else if (node->GetType() == Token::Type::List)
+	{
+		this->synthesizeList(node);
+	}
 	else
 	{
 		CRITICAL("unhandled syntax node type %s",
@@ -219,15 +355,40 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 
 	std::string newSym;
 
-	auto t = this->translationFuncs.find(node->GetValue());
+	std::string name = node->GetValue();
+
+	auto t = this->translationFuncs.find(name);
 	if (t != this->translationFuncs.end())
 	{
 		(t->second)(*this, node);
 	}
 	else
 	{
-		ERROR("no translation exists for %s", node->GetValue().c_str());
-		exit(EXIT_FAILURE);
+		if (this->symbols.Contains(name))
+		{
+			Token sym = this->symbols.Get(name);
+			fprintf(this->out, "%s ", name.c_str());
+
+			if (sym.GetType() == Token::Type::Number)
+			{
+				fprintf(this->out, "@ ");
+			}
+			else if (sym.GetType() == Token::Type::Float)
+			{
+				fprintf(this->out, "f@ ");
+			}
+			else
+			{
+				ERROR("unhandled variable type %s => %s",
+					  name.c_str(), TokenTypeToString(sym.GetType()).c_str());
+				exit(EXIT_FAILURE);
+			}
+		}
+		else
+		{
+			ERROR("no translation exists for %s", node->GetValue().c_str());
+			exit(EXIT_FAILURE);
+		}
 	}
 }
 
@@ -253,5 +414,17 @@ void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Float);
 	fprintf(this->out, "%se ", node->GetValue().c_str());
+}
+
+void GforthCodeGenerator::synthesizeList(const SyntaxNode* node)
+{
+	assert(node);
+	assert(this->out);
+	assert(node->GetType() == Token::Type::List);
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		this->synthesizeNode(&*it);
+	}
 }
 

@@ -26,6 +26,10 @@ private:
 	void checkTypes(void);
 	void checkNodeTypes(SyntaxNode* node);
 
+	void reorganizeLets(void);
+	void reorganizeLetsHelper(SyntaxNode* node);
+	void reorganizeLet(SyntaxNode* node);
+
 	void list(const SyntaxNode* node, SyntaxNode* parent); 
 	
 	void makeIntToFloat(std::vector<SyntaxNode>::iterator it,

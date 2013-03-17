@@ -37,7 +37,7 @@ Parser::~Parser(void)
 
 void Parser::ParseTree(void)
 {
-    this->root = new SyntaxNode(Token(Token::Type::Symbol, "statements"));
+    this->root = new SyntaxNode(Token(Token::Type::List));
 	this->F(this->root);
 }
 

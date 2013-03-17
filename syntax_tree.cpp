@@ -8,9 +8,9 @@ SyntaxNode::SyntaxNode(const Token& token, const SyntaxNode* parent) :
 {
 }
 
-SyntaxNode::SyntaxNode(const SyntaxNode& other) :
+SyntaxNode::SyntaxNode(const SyntaxNode& other, const SyntaxNode* parent) :
 	token(other.token),
-	parent(other.parent)
+	parent(parent)
 {
 	for (auto it = other.cbegin(); it != other.cend(); ++it)
 	{
@@ -93,7 +93,7 @@ SyntaxNode* SyntaxNode::AddChild(const Token& token)
 
 SyntaxNode* SyntaxNode::AddChild(const SyntaxNode& node)
 {
-	this->children.push_back(SyntaxNode(node));
+	this->children.push_back(SyntaxNode(node, parent));
 	return &this->children.back(); // TODO: make this thread safe
 }
 

@@ -15,7 +15,7 @@ class SyntaxNode
 {
 public:
 	SyntaxNode(const Token& token, const SyntaxNode* parent = NULL);
-	SyntaxNode(const SyntaxNode& other);
+	SyntaxNode(const SyntaxNode& other, const SyntaxNode* parent = NULL);
 
 	inline const Token& GetToken(void) const
 	{
