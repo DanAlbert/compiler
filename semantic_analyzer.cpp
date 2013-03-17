@@ -129,20 +129,27 @@ void SemanticAnalyzer::list(const SyntaxNode* node, SyntaxNode* parent)
 	DEBUG("handling list");
 
 	auto it = node->cbegin();
-	// TODO: this will fail if the first element of the list is a list itself
-	// example: ((if (foo) (+) (-)) 2 4)
-	SyntaxNode* op = parent->AddChild(it->GetToken());
+	if (it->GetValue() == "(")
+	{
+		parent = parent->AddChild(Token(Token::Type::Symbol, "statements"));
+		this->list(&*it, parent);
+	}
+	else
+	{
+		parent = parent->AddChild(it->GetToken());
+	}
+
 	DEBUG("built op");
 	for (++it; it != node->cend(); ++it)
 	{
 		if (it->GetValue() == "(")
 		{
-			this->list(&*it, op);
+			this->list(&*it, parent);
 		}
 		else if (it->GetValue() != ")")
 		{
 			DEBUG("adding child to list");
-			op->AddChild(*it);
+			parent->AddChild(*it);
 		}
 		// else ignore
 	}
