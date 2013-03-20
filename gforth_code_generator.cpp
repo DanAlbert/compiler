@@ -4,6 +4,8 @@
 
 #include "messages.h"
 
+Token::Type StringToType(const std::string& str);
+
 std::unordered_map<std::string, std::string> symbolTranslations =
 {
 	{"%",          "mod"},
@@ -22,7 +24,6 @@ std::unordered_map<std::string, std::string> symbolTranslations =
 
 void GforthCodeGenerator::translatedOp(const SyntaxNode* node)
 {
-	assert(this->out);
 	assert(node);
 
 	for (auto it = node->cbegin(); it != node->cend(); ++it) \
@@ -44,7 +45,6 @@ void GforthCodeGenerator::translatedOp(const SyntaxNode* node)
 
 void GforthCodeGenerator::mixedOp(const SyntaxNode* node)
 {
-	assert(this->out);
 	assert(node);
 
 	for (auto it = node->cbegin(); it != node->cend(); ++it)
@@ -85,7 +85,6 @@ void GforthCodeGenerator::mixedOp(const SyntaxNode* node)
 
 void GforthCodeGenerator::ifOp(const SyntaxNode* node)
 {
-	assert(this->out);
 	assert(node);
 
 	int i = 0;
@@ -129,7 +128,43 @@ void GforthCodeGenerator::ifOp(const SyntaxNode* node)
 	main << "endif ";
 }
 
-Token::Type StringToType(const std::string& str);
+void GforthCodeGenerator::whileOp(const SyntaxNode* node)
+{
+	assert(node);
+
+	int i = 0;
+	const SyntaxNode* condition = NULL;
+	const SyntaxNode* body = NULL;
+
+	for (auto it = node->cbegin(); it != node->cend(); ++it)
+	{
+		switch (i++)
+		{
+		case 0:
+			condition = &*it;
+			break;
+		case 1:
+			body = &*it;
+			break;
+		default:
+			ERROR("too many arguments to while");
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (!condition || !body)
+	{
+		ERROR("not enough arguments to while");
+		exit(EXIT_FAILURE);
+	}
+
+	main << "begin ";
+	this->synthesizeNode(condition);
+	main << "while ";
+	this->synthesizeNode(body);
+	main << "repeat ";
+}
+
 Token::Type StringToType(const std::string& str)
 {
 	if (str == "int")
@@ -149,7 +184,6 @@ Token::Type StringToType(const std::string& str)
 
 void GforthCodeGenerator::letOp(const SyntaxNode* node)
 {
-	assert(this->out);
 	assert(node);
 
 	int i = 0;
@@ -202,7 +236,6 @@ void GforthCodeGenerator::letOp(const SyntaxNode* node)
 
 void GforthCodeGenerator::assignOp(const SyntaxNode* node)
 {
-	assert(this->out);
 	assert(node);
 
 	int i = 0;
@@ -232,7 +265,7 @@ void GforthCodeGenerator::assignOp(const SyntaxNode* node)
 	}
 
 	std::string name = nameNode->GetValue();
-	std::string value = valueNode->GetValue();
+	this->synthesizeNode(valueNode);
 
 	if (!this->symbols.Contains(name))
 	{
@@ -241,7 +274,7 @@ void GforthCodeGenerator::assignOp(const SyntaxNode* node)
 	}
 
 	Symbol sym = this->symbols.Get(name);
-	main << value << ' ' << sym.GetDecoratedName() << ' ';
+	main << sym.GetDecoratedName() << ' ';
 
 	if (sym.GetType() == Token::Type::Number)
 	{
@@ -267,6 +300,7 @@ GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	this->addTranslation("*",          &GforthCodeGenerator::mixedOp);
 	this->addTranslation("/",          &GforthCodeGenerator::mixedOp);
 	this->addTranslation("<",          &GforthCodeGenerator::mixedOp);
+	this->addTranslation(">",          &GforthCodeGenerator::mixedOp);
 	this->addTranslation("=",          &GforthCodeGenerator::mixedOp);
 	this->addTranslation("println",    &GforthCodeGenerator::mixedOp);
 	this->addTranslation("%",          &GforthCodeGenerator::translatedOp);
@@ -282,6 +316,7 @@ GforthCodeGenerator::GforthCodeGenerator(const SyntaxNode* tree, FILE* out) :
 	this->addTranslation("newline",    &GforthCodeGenerator::translatedOp);
 	this->addTranslation("inttofloat", &GforthCodeGenerator::translatedOp);
 	this->addTranslation("if",         &GforthCodeGenerator::ifOp);
+	this->addTranslation("while",      &GforthCodeGenerator::whileOp);
 	this->addTranslation("let",        &GforthCodeGenerator::letOp);
 	this->addTranslation("assign",     &GforthCodeGenerator::assignOp);
 }
@@ -352,7 +387,6 @@ void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
 void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 {
 	assert(node);
-	assert(this->out);
 	assert(node->GetType() == Token::Type::Symbol);
 
 	std::string newSym;
@@ -397,7 +431,6 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
 {
 	assert(node);
-	assert(this->out);
 	assert(node->GetType() == Token::Type::String);
 	main << node->GetValue() << ' ';
 }
@@ -405,7 +438,6 @@ void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
 void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 {
 	assert(node);
-	assert(this->out);
 	assert(node->GetType() == Token::Type::Number);
 	main << node->GetValue() << ' ';
 }
@@ -413,7 +445,6 @@ void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 {
 	assert(node);
-	assert(this->out);
 	assert(node->GetType() == Token::Type::Float);
 	main << node->GetValue() << "e ";
 }
@@ -421,7 +452,6 @@ void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 void GforthCodeGenerator::synthesizeList(const SyntaxNode* node)
 {
 	assert(node);
-	assert(this->out);
 	assert(node->GetType() == Token::Type::List);
 
 	for (auto it = node->cbegin(); it != node->cend(); ++it)

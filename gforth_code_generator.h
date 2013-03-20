@@ -43,6 +43,7 @@ private:
 	void translatedOp(const SyntaxNode* node);
 	void mixedOp(const SyntaxNode* node);
 	void ifOp(const SyntaxNode* node);
+	void whileOp(const SyntaxNode* node);
 	void letOp(const SyntaxNode* node);
 	void assignOp(const SyntaxNode* node);
 };
