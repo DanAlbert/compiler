@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 
+#include "symbol.h"
 #include "token.h"
 
 class SymbolTable
@@ -14,16 +15,14 @@ class SymbolTable
 public:
 	SymbolTable(SymbolTable* parent = NULL);
 	inline const SymbolTable* GetParent(void) const;
-	const Token& operator[](const std::string& id) const;
+	const Symbol& operator[](const std::string& id) const;
 
 	void Add(const Token& token);
 	bool Contains(const std::string& id) const;
-	const Token& Get(const std::string& id) const;
+	const Symbol& Get(const std::string& id) const;
 
-	void PrintSymbols(FILE* file = stdout) const;
-	
 private:
-	std::unordered_map<std::string, Token> symbols;
+	std::unordered_map<std::string, Symbol> symbols;
     SymbolTable* parent;
 };
 

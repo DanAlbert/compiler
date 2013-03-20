@@ -14,7 +14,7 @@ char RandomChar(void)
 
 std::string RandomString(unsigned int maxLength)
 {
-	int length = rand() % maxLength;
+	int length = (rand() % (maxLength - 1)) + 1;
 	std::string str;
 
 	for (int i = 0; i < length; i++)

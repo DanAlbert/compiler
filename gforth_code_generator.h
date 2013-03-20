@@ -4,7 +4,9 @@
 #include <stdio.h>
 
 #include <functional>
+#include <sstream>
 #include <unordered_map>
+#include <vector>
 
 #include "code_generator.h"
 #include "symbol_table.h"
@@ -25,6 +27,9 @@ public:
 private:
 	std::unordered_map<std::string, TranslationFunction> translationFuncs;
 	SymbolTable symbols;
+
+	std::ostringstream globals;
+	std::ostringstream main;
 
 	void addTranslation(const std::string& symbol, TranslationFunction);
 

@@ -29,7 +29,8 @@ TEST(SymbolTable, Add)
 		
 		for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-			EXPECT_EQ(*it, table[it->GetLexeme()]);
+			EXPECT_EQ(it->GetType(), table[it->GetLexeme()].GetType());
+			EXPECT_EQ(it->GetLexeme(), table[it->GetLexeme()].GetName());
 		}
 	}
 }
@@ -55,10 +56,13 @@ TEST(SymbolTable, Get)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_EQ(*it, table.Get(it->GetLexeme()));
+            EXPECT_EQ(it->GetType(), table.Get(it->GetLexeme()).GetType());
+            EXPECT_EQ(it->GetLexeme(), table.Get(it->GetLexeme()).GetName());
         }
     }
-}TEST(SymbolTable, GetFromParent)
+}
+
+TEST(SymbolTable, GetFromParent)
 {
     for (int i = 0; i < NRAND_TESTS; i++)
     {
@@ -80,7 +84,8 @@ TEST(SymbolTable, Get)
         
     	for (auto it = tokens.begin(); it != tokens.end(); ++it)
 		{
-            EXPECT_EQ(*it, table.Get(it->GetLexeme()));
+            EXPECT_EQ(it->GetType(), table.Get(it->GetLexeme()).GetType());
+            EXPECT_EQ(it->GetLexeme(), table.Get(it->GetLexeme()).GetName());
         }
     }
 }

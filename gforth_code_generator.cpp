@@ -1,7 +1,6 @@
 #include "gforth_code_generator.h"
 
 #include <assert.h>
-#include <sstream>
 
 #include "messages.h"
 
@@ -34,7 +33,7 @@ void GforthCodeGenerator::translatedOp(const SyntaxNode* node)
 	auto t = symbolTranslations.find(node->GetValue());
 	if (t != symbolTranslations.end())
 	{
-		fprintf(this->out, "%s ", t->second.c_str());
+		main << t->second << ' ';
 	}
 	else
 	{
@@ -81,7 +80,7 @@ void GforthCodeGenerator::mixedOp(const SyntaxNode* node)
 		builder << symbol;
 	}
 
-	fprintf(this->out, "%s ", builder.str().c_str());
+	main << builder.str() << ' ';
 }
 
 void GforthCodeGenerator::ifOp(const SyntaxNode* node)
@@ -120,14 +119,14 @@ void GforthCodeGenerator::ifOp(const SyntaxNode* node)
 	}
 
 	this->synthesizeNode(condition);
-	fprintf(this->out, "if ");
+	main << "if ";
 	this->synthesizeNode(thenBody);
 	if (elseBody)
 	{
-		fprintf(this->out, "else ");
+		main << "else ";
 		this->synthesizeNode(elseBody);
 	}
-	fprintf(this->out, "endif ");
+	main << "endif ";
 }
 
 Token::Type StringToType(const std::string& str);
@@ -196,8 +195,9 @@ void GforthCodeGenerator::letOp(const SyntaxNode* node)
 	}
 
 	this->symbols.Add(Token(type, name));
+	Symbol sym = this->symbols.Get(name);
 
-	fprintf(this->out, "variable %s ", name.c_str());
+	globals << "variable " << sym.GetDecoratedName() << ' ';
 }
 
 void GforthCodeGenerator::assignOp(const SyntaxNode* node)
@@ -240,16 +240,16 @@ void GforthCodeGenerator::assignOp(const SyntaxNode* node)
 		exit(EXIT_FAILURE);
 	}
 
-	Token sym = this->symbols.Get(name);
-	fprintf(this->out, "%s %s ", value.c_str(), name.c_str());
+	Symbol sym = this->symbols.Get(name);
+	main << value << ' ' << sym.GetDecoratedName() << ' ';
 
 	if (sym.GetType() == Token::Type::Number)
 	{
-		fprintf(this->out, "! ");
+		main << "! ";
 	}
 	else if (sym.GetType() == Token::Type::Float)
 	{
-		fprintf(this->out, "f! ");
+		main << "f! ";
 	}
 	else
 	{
@@ -300,14 +300,16 @@ void GforthCodeGenerator::Synthesize(void)
 
 	// our entire output needs to be wrapped in a defined word because gforth
 	// doesn't allow conditional branches or loops outside of words
-	fprintf(this->out, ": __MAIN__ ");
+	main << ": __MAIN__ ";
 	for (auto it = this->tree->cbegin(); it != this->tree->cend(); ++it)
 	{
 		this->synthesizeNode(&*it);
 	}
-	fprintf(this->out, "; __MAIN__");
+	main << "; __MAIN__";
 
-	fputc('\n', this->out);
+	fprintf(this->out, "%s %s\n",
+		   	this->globals.str().c_str(),
+		   	this->main.str().c_str());
 }
 
 void GforthCodeGenerator::synthesizeNode(const SyntaxNode* node)
@@ -366,16 +368,16 @@ void GforthCodeGenerator::synthesizeSymbol(const SyntaxNode* node)
 	{
 		if (this->symbols.Contains(name))
 		{
-			Token sym = this->symbols.Get(name);
-			fprintf(this->out, "%s ", name.c_str());
+			Symbol sym = this->symbols.Get(name);
+			main << sym.GetDecoratedName() << ' ';
 
 			if (sym.GetType() == Token::Type::Number)
 			{
-				fprintf(this->out, "@ ");
+				main << "@ ";
 			}
 			else if (sym.GetType() == Token::Type::Float)
 			{
-				fprintf(this->out, "f@ ");
+				main << "f@ ";
 			}
 			else
 			{
@@ -397,7 +399,7 @@ void GforthCodeGenerator::synthesizeString(const SyntaxNode* node)
 	assert(node);
 	assert(this->out);
 	assert(node->GetType() == Token::Type::String);
-	fprintf(this->out, "%s ", node->GetValue().c_str());
+	main << node->GetValue() << ' ';
 }
 
 void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
@@ -405,7 +407,7 @@ void GforthCodeGenerator::synthesizeNumber(const SyntaxNode* node)
 	assert(node);
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Number);
-	fprintf(this->out, "%s ", node->GetValue().c_str());
+	main << node->GetValue() << ' ';
 }
 
 void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
@@ -413,7 +415,7 @@ void GforthCodeGenerator::synthesizeFloat(const SyntaxNode* node)
 	assert(node);
 	assert(this->out);
 	assert(node->GetType() == Token::Type::Float);
-	fprintf(this->out, "%se ", node->GetValue().c_str());
+	main << node->GetValue() << "e ";
 }
 
 void GforthCodeGenerator::synthesizeList(const SyntaxNode* node)

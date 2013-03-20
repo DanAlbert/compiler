@@ -15,7 +15,11 @@ TEST(Token, Constructor)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
 
 		Token token(type, str);
 
@@ -29,7 +33,11 @@ TEST(Token, CopyConstructor)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
 
 		Token token(type, str);
 		Token token2(token);
@@ -43,7 +51,11 @@ TEST(Token, Assignment)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
 
 		Token token(type, str);
 		Token token2 = token;
@@ -57,7 +69,11 @@ TEST(Token, Equality)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
 
 		Token token1(type, str);
 		Token token2(type, str);
@@ -102,13 +118,20 @@ TEST(Token, ToString)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
 
 		Token token(type, str);
 		
 		std::ostringstream builder;
-		builder << '<' << TokenTypeToString(token.GetType()) << ", "
-			    << token.GetLexeme() << '>';
+		builder << '<' << TokenTypeToString(token.GetType());
+		if (type != Token::Type::List)
+			builder << ", " << token.GetLexeme();
+		builder << '>';
+
 		std::string expected = builder.str();
 
 		EXPECT_EQ(expected, token.ToString());
@@ -117,7 +140,7 @@ TEST(Token, ToString)
 
 Token::Type RandomType(void)
 {
-	int idx = RandomBetween(0, static_cast<int>(Token::Type::Symbol)); 
+	int idx = RandomBetween(0, static_cast<int>(Token::Type::List)); 
 	return static_cast<Token::Type>(idx);
 }
 

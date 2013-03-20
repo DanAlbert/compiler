@@ -17,7 +17,12 @@ TEST(SyntaxNode, Constructor)
 	for (int i = 0; i < NRAND_TESTS; i++)
 	{
 		Token::Type type = RandomType();
-		std::string str = RandomString(MAX_STRING_LENGTH);
+		std::string str;
+		if (type == Token::Type::List)
+			str = "";
+		else
+			str = RandomString(MAX_STRING_LENGTH);
+
 		SyntaxNode node(Token(type, str));
 
 		EXPECT_EQ(type, node.GetType());
@@ -56,7 +61,11 @@ TEST(SyntaxNode, AddNode)
 SyntaxNode RandomSyntaxNode(void)
 {
 	Token::Type type = RandomType();
-	std::string str = RandomString(MAX_STRING_LENGTH);
+	std::string str;
+	if (type == Token::Type::List)
+		str = "";
+	else
+		str = RandomString(MAX_STRING_LENGTH);
 
 	return SyntaxNode(Token(type, str));
 }

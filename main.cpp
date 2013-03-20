@@ -86,13 +86,6 @@ void printParse(const char* file);
 void printSemantic(const char* file);
 
 /**
- * Parses a file and prints the symbolt table associated with the file.
- *
- * @param file The file to be parsed.
- */
-void printSymbols(const char* file);
-
-/**
  * Prints usage information.
  */
 void usage(void);
@@ -157,8 +150,6 @@ int main(int argc, char **argv)
 		case 's':
 			mode = Mode::Semantic;
 			break;
-		case 'S': //can't think of a better letter b/c s and t are taken
-			mode = Mode::Symbol;
 		case 'v':
 			set_log_level(CLAMP(get_log_level() + 1,
 			                    LOGLEVEL_MIN, LOGLEVEL_MAX));
@@ -188,9 +179,6 @@ int main(int argc, char **argv)
 				break;
 			case Mode::Semantic:
 				printSemantic(file);
-				break;
-			case Mode::Symbol:
-				printSymbols(file);
 				break;
 			case Mode::Translate:
 				translate(file);
@@ -261,17 +249,6 @@ void printSemantic(const char* file)
 	sem.Construct();
 	sem.PrintTree();
 }
-
-void printSymbols(const char* file)
-{
-	assert(file);
-	INFO("parsing %s", file);
-	Parser parser(file);
-	parser.ParseTree();
-	INFO("printing symbol table");
-	parser.symtab.PrintSymbols();
-}
-
 
 void usage(void)
 {

@@ -16,6 +16,7 @@ SRC =	main.cpp \
 		$(SRCDIR)/messages.cpp \
 		$(SRCDIR)/lexer.cpp \
 		$(SRCDIR)/token.cpp \
+		$(SRCDIR)/symbol.cpp \
 		$(SRCDIR)/symbol_table.cpp \
 		$(SRCDIR)/syntax_tree.cpp \
 
